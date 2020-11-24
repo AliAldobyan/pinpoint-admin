@@ -9,6 +9,8 @@ const reducer = (state = initialState, action) => {
         case ADD_JOURNEY:
             return [action.payload, ...state]
         case ASSIGN_DRIVER:
+            const journeyID = action.payload.driver.id
+            state = state.map(journey => journey.id === journeyID ? {...journey, driver: action.payload.journey.driver} : journey)
             return state
         default:
             return state;
