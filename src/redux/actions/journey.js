@@ -33,7 +33,7 @@ export const assignDriver = (driver) => async (dispatch) => {
         const journey = res.data;
         dispatch({
             type: ASSIGN_DRIVER,
-            payload: journey,
+            payload: {journey, driver},
         });
     } catch (error) {
         console.error(error);
