@@ -5,7 +5,6 @@ import Navbar from "./components/Sidebar/Navbar";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 
-
 import Home from "./components/HomePage/Home";
 import Shipments from "./components/Shipments/Shipments";
 import Journey from "./components/Journey/Journey";
@@ -16,12 +15,6 @@ import JourneyCompleted from "./components/Journey/JourneyCompleted";
 function App() {
   return (
     <>
-      <Navbar />
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/shipments" component={Shipments} />
-      </Switch>
-
       <Navbar />
       <Switch>
         <Route path="/" exact component={Home} />
