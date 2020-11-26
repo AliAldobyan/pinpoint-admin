@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from "react";
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.css";
@@ -6,97 +7,77 @@ import "../../index.css";
 
 import { connect } from "react-redux";
 
-import React, { useState, useEffect, useRef } from "react";
+import moment from "moment";
 import classNames from "classnames";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
-
+import { MultiSelect } from "primereact/multiselect";
 import { Toolbar } from "primereact/toolbar";
-import { InputTextarea } from "primereact/inputtextarea";
-import { RadioButton } from "primereact/radiobutton";
-import { InputNumber } from "primereact/inputnumber";
+import { Dropdown } from "primereact/dropdown";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import "./DataTableDemo.css";
 
-const Shipments = ({ shipments }) => {
+const Shipments = ({ shipments, statuses }) => {
   let emptyProduct = {
     id: null,
     name: "",
-    image: null,
-    description: "",
-    category: null,
-    price: 0,
-    quantity: 0,
-    rating: 0,
-    inventoryStatus: "INSTOCK",
+    region: "",
+    driver: null,
+    date: null,
+    inventoryStatus: "DELIVERED",
   };
 
-  const [allshipments, setShipments] = useState(shipments);
-  const [productDialog, setProductDialog] = useState(false);
-  const [deleteProductDialog, setDeleteProductDialog] = useState(false);
-  const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-  const [product, setProduct] = useState(emptyProduct);
+  const [allshipments, setShipments] = useState(shipments || null);
+  const [shipmentDialog, setShipmentDialog] = useState(false);
+
+  const [shipment, setShipment] = useState(emptyProduct);
   const [selectedProducts, setSelectedProducts] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
+  const statusesOptions = statuses?.map((status) => status.name);
 
-  //   if (!shipments) return <h1> LOADING...</h1>;
-  //   setShipments(shipments);
   useEffect(() => {
     setShipments(shipments);
-  }, []);
+  }, [shipments]);
 
-  const formatCurrency = (value) => {
-    return value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-  };
-
+  if (!shipments) return <h1> LOADING...</h1>;
   const openNew = () => {
-    setProduct(emptyProduct);
+    setShipment(emptyProduct);
     setSubmitted(false);
-    setProductDialog(true);
+    setShipmentDialog(true);
   };
 
   const hideDialog = () => {
     setSubmitted(false);
-    setProductDialog(false);
-  };
-
-  const hideDeleteProductDialog = () => {
-    setDeleteProductDialog(false);
-  };
-
-  const hideDeleteProductsDialog = () => {
-    setDeleteProductsDialog(false);
+    setShipmentDialog(false);
   };
 
   const saveProduct = () => {
     setSubmitted(true);
 
-    if (product.name.trim()) {
+    if (shipment.name.trim()) {
       let _allshipments = [...allshipments];
-      let _product = { ...product };
-      if (product.id) {
-        const index = findIndexById(product.id);
+      let _shipment = { ...shipment };
+      if (shipment.id) {
+        const index = findIndexById(shipment.id);
 
-        _allshipments[index] = _product;
+        _allshipments[index] = _shipment;
         toast.current.show({
           severity: "success",
           summary: "Successful",
-          detail: "Product Updated",
+          detail: "Shipment Added",
           life: 3000,
         });
       } else {
-        _product.id = createId();
-        _product.image = "product-placeholder.svg";
-        _allshipments.push(_product);
+        _shipment.id = createId();
+        _allshipments.push(_shipment);
         toast.current.show({
           severity: "success",
           summary: "Successful",
@@ -106,32 +87,14 @@ const Shipments = ({ shipments }) => {
       }
 
       setShipments(_allshipments);
-      setProductDialog(false);
-      setProduct(emptyProduct);
+      setShipmentDialog(false);
+      setShipment(emptyProduct);
     }
   };
 
-  const editProduct = (product) => {
-    setProduct({ ...product });
-    setProductDialog(true);
-  };
-
-  const confirmDeleteProduct = (product) => {
-    setProduct(product);
-    setDeleteProductDialog(true);
-  };
-
-  const deleteProduct = () => {
-    let _allshipments = allshipments.filter((val) => val.id !== product.id);
-    setProduct(_allshipments);
-    setDeleteProductDialog(false);
-    setProduct(emptyProduct);
-    toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Product Deleted",
-      life: 3000,
-    });
+  const editProduct = (shipment) => {
+    setShipment({ ...shipment });
+    setShipmentDialog(true);
   };
 
   const findIndexById = (id) => {
@@ -156,77 +119,108 @@ const Shipments = ({ shipments }) => {
     return id;
   };
 
-  const confirmDeleteSelected = () => {
-    setDeleteProductsDialog(true);
-  };
-
-  const deleteSelectedProducts = () => {
-    let _allshipments = allshipments.filter(
-      (val) => !selectedProducts.includes(val)
-    );
-    setShipments(_allshipments);
-    setDeleteProductsDialog(false);
-    setSelectedProducts(null);
-    toast.current.show({
-      severity: "success",
-      summary: "Successful",
-      detail: "Shipments Deleted",
-      life: 3000,
-    });
-  };
-
   const onCategoryChange = (e) => {
-    let _product = { ...product };
-    _product["category"] = e.value;
-    setProduct(_product);
+    let _shipment = { ...shipment };
+    _shipment["status"] = e.value;
+    setShipment(_shipment);
   };
 
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || "";
-    let _product = { ...product };
-    _product[`${name}`] = val;
+    let _shipment = { ...shipment };
+    _shipment[`${name}`] = val;
 
-    setProduct(_product);
+    setShipment(_shipment);
   };
 
   const onInputNumberChange = (e, name) => {
     const val = e.value || 0;
-    let _product = { ...product };
-    _product[`${name}`] = val;
+    let _shipment = { ...shipment };
+    _shipment[`${name}`] = val;
 
-    setProduct(_product);
+    setShipment(_shipment);
   };
 
   const leftToolbarTemplate = () => {
     return (
       <React.Fragment>
         <Button
-          label="Add new shipment"
+          label="New shipment"
           icon="pi pi-plus"
-          className="p-button-success p-mr-2"
+          className="p-button-success"
           onClick={openNew}
-        />
-        <Button
-          label="Delete"
-          icon="pi pi-trash"
-          className="p-button-danger"
-          onClick={confirmDeleteSelected}
-          disabled={!selectedProducts || !selectedProducts.length}
         />
       </React.Fragment>
     );
   };
 
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.price);
-  };
-
   const statusBodyTemplate = (rowData) => {
     return (
-      <span
-        className={`product-badge status-${rowData.inventoryStatus.toLowerCase()}`}
-      >
-        {rowData.inventoryStatus}
+      <React.Fragment>
+        <span
+          className={classNames(
+            "customer-badge",
+            "status-" + rowData.status.name
+          )}
+        >
+          {rowData.status.name}
+        </span>
+      </React.Fragment>
+    );
+  };
+  const renderStatusFilter = () => {
+    return (
+      <MultiSelect
+        value={selectedStatus}
+        options={statusesOptions}
+        onChange={onStatusFilterChange}
+        itemTemplate={statusItemTemplate}
+        filterBy={selectedStatus}
+        placeholder="Select a Status"
+        className="p-column-filter"
+      />
+    );
+  };
+  const statusItemTemplate = (option) => {
+    return (
+      <span className={classNames("customer-badge", "status-" + option)}>
+        {option}
+      </span>
+    );
+  };
+  const onStatusFilterChange = (event) => {
+    dt.current.filter(event.value, "status.name", "equals");
+
+    setSelectedStatus(event.value);
+  };
+  const journeyBodyTemplate = (rowData) => {
+    return (
+      <span className={`shipment-badge driver-${rowData.journey}`}>
+        {rowData.journey}
+      </span>
+    );
+  };
+  const trackinNumberBodyTemplate = (rowData) => {
+    return (
+      <span className={`shipment-badge status-${rowData.tracking_num}`}>
+        {rowData.tracking_num}
+      </span>
+    );
+  };
+  const customerBodyTemplate = (rowData) => {
+    return (
+      <span className={`shipment-badge status-${rowData.receiver_name}`}>
+        {rowData.receiver_name}
+      </span>
+    );
+  };
+  //   const regionBodyTemplate = (rowData) => {
+  //     return <span>{rowData.region.name}</span>;
+  //   };
+  const dateBodyTemplate = (rowData) => {
+    return (
+      <span className={`shipment-badge status-${rowData}`}>
+        {moment(rowData.date_added).format("YYYY-MM-DD")}
       </span>
     );
   };
@@ -236,13 +230,8 @@ const Shipments = ({ shipments }) => {
       <React.Fragment>
         <Button
           icon="pi pi-pencil"
-          className="p-button-rounded p-button-success p-mr-2"
+          className="p-button-rounded p-button-success ml-5"
           onClick={() => editProduct(rowData)}
-        />
-        <Button
-          icon="pi pi-trash"
-          className="p-button-rounded p-button-warning"
-          onClick={() => confirmDeleteProduct(rowData)}
         />
       </React.Fragment>
     );
@@ -261,7 +250,7 @@ const Shipments = ({ shipments }) => {
       </span>
     </div>
   );
-  const productDialogFooter = (
+  const shipmentDialogFooter = (
     <React.Fragment>
       <Button
         label="Cancel"
@@ -277,41 +266,12 @@ const Shipments = ({ shipments }) => {
       />
     </React.Fragment>
   );
-  const deleteProductDialogFooter = (
-    <React.Fragment>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        className="p-button-text"
-        onClick={hideDeleteProductDialog}
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        className="p-button-text"
-        onClick={deleteProduct}
-      />
-    </React.Fragment>
-  );
-  const deleteProductsDialogFooter = (
-    <React.Fragment>
-      <Button
-        label="No"
-        icon="pi pi-times"
-        className="p-button-text"
-        onClick={hideDeleteProductsDialog}
-      />
-      <Button
-        label="Yes"
-        icon="pi pi-check"
-        className="p-button-text"
-        onClick={deleteSelectedProducts}
-      />
-    </React.Fragment>
-  );
+
   console.log(allshipments);
+
+  const statusFilterElement = renderStatusFilter();
   return (
-    <div className="container mt-5">
+    <div className="shipments">
       <div className="datatable-crud-demo">
         <Toast ref={toast} />
 
@@ -333,186 +293,108 @@ const Shipments = ({ shipments }) => {
             header={header}
           >
             <Column
-              selectionMode="multiple"
-              headerStyle={{ width: "3rem" }}
+              field="code"
+              header="Tracking Number"
+              body={trackinNumberBodyTemplate}
             ></Column>
-            <Column field="code" header="Tracking ID" sortable></Column>
-            <Column field="name" header="Customer" sortable></Column>
-
             <Column
-              field="driver"
-              header="Driver"
-              body={priceBodyTemplate}
+              field="receiver_name"
+              header="Customer Name"
+              body={customerBodyTemplate}
+            ></Column>
+            {/* <Column field="receiver_phone" header="Customer Phone"  ></Column> */}
+            <Column
+              field="date"
+              header="Date"
+              body={dateBodyTemplate}
               sortable
             ></Column>
-            <Column field="category" header="Region" sortable></Column>
+            <Column
+              field="preferred_time.time"
+              header="Preferred Time"
+
+              //   body={journeyBodyTemplate}
+            ></Column>
+            <Column
+              field="journey"
+              header="Journey"
+              body={journeyBodyTemplate}
+              sortable
+            ></Column>
+            <Column
+              field="region.name"
+              header="Region"
+              //   body={regionBodyTemplate}
+              sortable
+            ></Column>
 
             <Column
-              field="inventoryStatus"
+              field="status.name"
               header="Status"
               body={statusBodyTemplate}
               sortable
-            ></Column>
+              filter
+              filterElement={statusFilterElement}
+            />
             <Column body={actionBodyTemplate}></Column>
           </DataTable>
         </div>
 
         <Dialog
-          visible={productDialog}
-          style={{ width: "450px" }}
-          header="Product Details"
+          visible={shipmentDialog}
+          style={{ width: "600px" }}
+          header="Shipment Details"
           modal
           className="p-fluid"
-          footer={productDialogFooter}
+          footer={shipmentDialogFooter}
           onHide={hideDialog}
         >
-          {product.image && (
-            <img
-              src={`showcase/demo/images/product/${product.image}`}
-              onError={(e) =>
-                (e.target.src =
-                  "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-              }
-              alt={product.image}
-              className="product-image"
-            />
-          )}
           <div className="p-field">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="id">Tracking num</label>
+            <InputText
+              id="id"
+              value={shipment.tracking_num}
+              onChange={(e) => onInputChange(e, "id")}
+              required
+              autoFocus
+              className={classNames({
+                "p-invalid": submitted && !shipment.tracking_num,
+              })}
+            />
+            {submitted && !shipment.tracking_num && (
+              <small className="p-invalid">Tracking Number is required.</small>
+            )}
+          </div>
+          <div className="p-field">
+            <label htmlFor="name">Receiver name</label>
             <InputText
               id="name"
-              value={product.name}
+              value={shipment.receiver_name}
               onChange={(e) => onInputChange(e, "name")}
               required
               autoFocus
               className={classNames({
-                "p-invalid": submitted && !product.name,
+                "p-invalid": submitted && !shipment.receiver_name,
               })}
             />
-            {submitted && !product.name && (
-              <small className="p-invalid">Name is required.</small>
+            {submitted && !shipment.receiver_name && (
+              <small className="p-invalid">Receiver name is required.</small>
             )}
           </div>
           <div className="p-field">
-            <label htmlFor="description">Description</label>
-            <InputTextarea
-              id="description"
-              value={product.description}
-              onChange={(e) => onInputChange(e, "description")}
+            <label htmlFor="name">Receiver phone</label>
+            <InputText
+              id="phone"
+              value={shipment.receiver_phone}
+              onChange={(e) => onInputChange(e, "phone")}
               required
-              rows={3}
-              cols={20}
+              autoFocus
+              className={classNames({
+                "p-invalid": submitted && !shipment.receiver_phone,
+              })}
             />
-          </div>
-
-          <div className="p-field">
-            <label className="p-mb-3">Category</label>
-            <div className="p-formgrid p-grid">
-              <div className="p-field-radiobutton p-col-6">
-                <RadioButton
-                  inputId="category1"
-                  name="category"
-                  value="Accessories"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Accessories"}
-                />
-                <label htmlFor="category1">Accessories</label>
-              </div>
-              <div className="p-field-radiobutton p-col-6">
-                <RadioButton
-                  inputId="category2"
-                  name="category"
-                  value="Clothing"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Clothing"}
-                />
-                <label htmlFor="category2">Clothing</label>
-              </div>
-              <div className="p-field-radiobutton p-col-6">
-                <RadioButton
-                  inputId="category3"
-                  name="category"
-                  value="Electronics"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Electronics"}
-                />
-                <label htmlFor="category3">Electronics</label>
-              </div>
-              <div className="p-field-radiobutton p-col-6">
-                <RadioButton
-                  inputId="category4"
-                  name="category"
-                  value="Fitness"
-                  onChange={onCategoryChange}
-                  checked={product.category === "Fitness"}
-                />
-                <label htmlFor="category4">Fitness</label>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-formgrid p-grid">
-            <div className="p-field p-col">
-              <label htmlFor="price">Price</label>
-              <InputNumber
-                id="price"
-                value={product.price}
-                onValueChange={(e) => onInputNumberChange(e, "price")}
-                mode="currency"
-                currency="USD"
-                locale="en-US"
-              />
-            </div>
-            <div className="p-field p-col">
-              <label htmlFor="quantity">Quantity</label>
-              <InputNumber
-                id="quantity"
-                value={product.quantity}
-                onValueChange={(e) => onInputNumberChange(e, "quantity")}
-                integeronly
-              />
-            </div>
-          </div>
-        </Dialog>
-
-        <Dialog
-          visible={deleteProductDialog}
-          style={{ width: "450px" }}
-          header="Confirm"
-          modal
-          footer={deleteProductDialogFooter}
-          onHide={hideDeleteProductDialog}
-        >
-          <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle p-mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            {product && (
-              <span>
-                Are you sure you want to delete <b>{product.name}</b>?
-              </span>
-            )}
-          </div>
-        </Dialog>
-
-        <Dialog
-          visible={deleteProductsDialog}
-          style={{ width: "450px" }}
-          header="Confirm"
-          modal
-          footer={deleteProductsDialogFooter}
-          onHide={hideDeleteProductsDialog}
-        >
-          <div className="confirmation-content">
-            <i
-              className="pi pi-exclamation-triangle p-mr-3"
-              style={{ fontSize: "2rem" }}
-            />
-            {product && (
-              <span>
-                Are you sure you want to delete the selected shipments?
-              </span>
+            {submitted && !shipment.receiver_phone && (
+              <small className="p-invalid">Receiver phone is required.</small>
             )}
           </div>
         </Dialog>
@@ -520,7 +402,6 @@ const Shipments = ({ shipments }) => {
     </div>
   );
 };
-const mapStateToProps = ({ shipments }) => ({ shipments });
-// const rootElement = document.getElementById("root");
-// ReactDOM.render(<DataTableCrudDemo />, rootElement);
+const mapStateToProps = ({ shipments, statuses }) => ({ shipments, statuses });
+
 export default connect(mapStateToProps)(Shipments);
