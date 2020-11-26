@@ -40,8 +40,8 @@
 
 .nav-text a {
   text-decoration: none;
-  color: #f5f5f5;
-  font-size: 18px;
+  color: #f9f9f9;
+  font-size: 20px;
   width: 95%;
   height: 100%;
   display: flex;
@@ -51,7 +51,8 @@
 }
 
 .nav-text a:hover {
-  background-color: #1a83ff;
+  background-color: #5626e4;
+  color: white;
 }
 
 .nav-menu-items {
@@ -65,6 +66,7 @@
   display: flex;
   justify-content: start;
   align-items: center;
+  color: white;
 }
 
 span {

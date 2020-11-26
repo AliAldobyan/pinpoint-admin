@@ -13,18 +13,16 @@ function Navbar() {
 
   return (
     <>
-      <IconContext.Provider value={{ color: "#060b26" }}>
+      <IconContext.Provider value={{ color: "#f9f9f9" }}>
         <div className="navbar">
           <Link to="#" className="menu-bars">
             <FaIcons.FaBars onClick={showSidebar} />
           </Link>
         </div>
-        <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
-          <ul className="nav-menu-items" onClick={showSidebar}>
+        <nav className={"nav-menu active"}>
+          <ul className="nav-menu-items">
             <li className="navbar-toggle">
-              <Link to="#" className="menu-bars">
-                <AiIcons.AiOutlineClose />
-              </Link>
+              <h2 className="ml-5">Pinpoint</h2>
             </li>
             {SidebarData.map((item, index) => {
               return (
