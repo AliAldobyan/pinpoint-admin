@@ -6,6 +6,7 @@ const Journey = () => {
         <div>
             <Link to="/journeys/list/"><h1>list</h1></Link>
             <Link to="/journeys/current/"><h1>Current</h1></Link>
+            <Link to="/journeys/completed/"><h1>Completed</h1></Link>
         </div>
     );
 };

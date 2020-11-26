@@ -8,7 +8,7 @@ const JourneyItem = ({ journey }) => {
                 <button className="btn btn-outline-dark">Assign Driver</button>}
             <p>Status: {journey.is_completed ? <p>Completed</p> : <p>Active</p>}</p>
             <h5>Number of packages: {journey.packages.length}</h5>
-            <p>Region: {journey.packages[0]?.region.name}</p>
+            <p>Region: {journey.packages[0]?.region?.name}</p>
         </div>
     );
 };

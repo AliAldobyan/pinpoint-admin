@@ -2,9 +2,9 @@ import React from 'react';
 import JourneyItem from "./JourneyItem";
 import {connect} from "react-redux";
 
-const JourneyCurrent = ({ journeys }) => {
+const JourneyCompleted = ({ journeys }) => {
     const journeysList = journeys.map(journey => {
-        if (!journey.is_completed) {
+        if (journey.is_completed) {
             return (
                 <JourneyItem
                     key={journey.id}
@@ -26,4 +26,4 @@ const mapStateToProps = ({ journeys }) => ({
     loading: !journeys,
 });
 
-export default connect(mapStateToProps)(JourneyCurrent);
+export default connect(mapStateToProps)(JourneyCompleted);
