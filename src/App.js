@@ -1,16 +1,19 @@
+import React from "react";
 import "./App.css";
+import Navbar from "./components/Sidebar/Navbar";
+import { Switch, Route } from "react-router-dom";
 
-// component
-import Sidebar from "./components/Sidebar/Sidebar.js";
+import Home from "./components/HomePage/Home";
 import Shipments from "./components/Shipments/Shipments";
 
 function App() {
   return (
     <>
-      <Sidebar />
-      <div className="container mt-5">
-        <Shipments />
-      </div>
+      <Navbar />
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/shipments" component={Shipments} />
+      </Switch>
     </>
   );
 }
