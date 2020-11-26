@@ -1,9 +1,12 @@
-import "./App.css";
 import React from "react";
+import "./App.css";
+
+import Navbar from "./components/Sidebar/Navbar";
+
 import { Switch, Route, Redirect } from "react-router-dom";
 
-// component
-import Sidebar from "./components/Sidebar/Sidebar.js";
+
+import Home from "./components/HomePage/Home";
 import Shipments from "./components/Shipments/Shipments";
 import Journey from "./components/Journey/Journey";
 import JourneyList from "./components/Journey/JourneyList";
@@ -12,10 +15,17 @@ import JourneyCurrent from "./components/Journey/JourneyCurrent";
 function App() {
   return (
     <>
-      <Sidebar />
-      <div className="container mt-5">
-        <Shipments />
-      </div>
+      <Navbar />
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/shipments" component={Shipments} />
+      </Switch>
+
+      <Navbar />
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/shipments" component={Shipments} />
+      </Switch>
       {/*<Journey/>*/}
       {/*  <Switch>*/}
       {/*      <Route path="/journeys/list/">*/}
@@ -25,6 +35,7 @@ function App() {
       {/*          <JourneyCurrent/>*/}
       {/*      </Route>*/}
       {/*  </Switch>*/}
+
     </>
   );
 }
