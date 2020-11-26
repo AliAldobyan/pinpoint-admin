@@ -8,23 +8,27 @@ import Shipments from "./components/Shipments/Shipments";
 import Journey from "./components/Journey/Journey";
 import JourneyList from "./components/Journey/JourneyList";
 import JourneyCurrent from "./components/Journey/JourneyCurrent";
+import JourneyCompleted from "./components/Journey/JourneyCompleted";
 
 function App() {
   return (
     <>
-      <Sidebar />
-      <div className="container mt-5">
-        <Shipments />
-      </div>
-      {/*<Journey/>*/}
-      {/*  <Switch>*/}
-      {/*      <Route path="/journeys/list/">*/}
-      {/*          <JourneyList/>*/}
-      {/*      </Route>*/}
-      {/*      <Route path="/journeys/current/">*/}
-      {/*          <JourneyCurrent/>*/}
-      {/*      </Route>*/}
-      {/*  </Switch>*/}
+      {/*<Sidebar />*/}
+      {/*<div className="container mt-5">*/}
+      {/*  <Shipments />*/}
+      {/*</div>*/}
+      <Journey/>
+        <Switch>
+            <Route path="/journeys/list/">
+                <JourneyList/>
+            </Route>
+            <Route path="/journeys/current/">
+                <JourneyCurrent/>
+            </Route>
+            <Route path="/journeys/completed/">
+                <JourneyCompleted/>
+            </Route>
+        </Switch>
     </>
   );
 }
