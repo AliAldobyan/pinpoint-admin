@@ -29,6 +29,7 @@ const JourneyMap = ({ shipments, loading }) => {
             setTravelTime(travelTime + res.data.rows.elements.duration.value)
         }
         catch (e) {
+
             console.log(e)
         }
     }
