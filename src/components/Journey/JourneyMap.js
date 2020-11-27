@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import {connect} from "react-redux";
 // import "@reach/combobox/styles.css";
@@ -17,16 +18,39 @@ const JourneyMap = ({ shipments, loading }) => {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries,
     });
-    const [markers, setMarkers] = useState(shipments || []);
-    useEffect( () => {
-        setMarkers(shipments)
-    }, [shipments])
+    const [selected, setSelected] = useState([])
+    const [travelTime, setTravelTime] = useState(0)
     if (loadError) return "Error";
     if (!isLoaded) return "Loading...";
     if (!shipments) return <h1> LOADING...</h1>;
-    console.log(markers);
+    const calculateTime = async () =>{
+        try {
+            let res = await axios.get("https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=24.766234,46.582030&destinations=24.768533,46.585431&key=KEY", {headers: {"Access-Control-Allow-Origin": "*"}})
+            setTravelTime(travelTime + res.data.rows.elements.duration.value)
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+    console.log(selected);
+    const markers = shipments?.map(shipment => (
+        <Marker
+            key={shipment.id}
+            position={{lat: Number(shipment.latitude), lng: Number(shipment.longitude)}}
+            onClick={() => {
+                setSelected(selected.includes(shipment.id) ? selected.filter(pin => pin !== shipment.id) : [...selected, shipment.id]);
+                calculateTime()
+            }}
+            icon={selected.includes(shipment.id)?{
+                url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
+            }:{
+                url: `http://maps.google.com/mapfiles/ms/icons/red-dot.png`,
+            }}
+        />
+    ))
     return (
         <div>
+            <h1>{travelTime}</h1>
             <GoogleMap
                 id="map"
                 mapContainerStyle={mapContainerStyle}
@@ -36,21 +60,7 @@ const JourneyMap = ({ shipments, loading }) => {
                 // onClick={onMapClick}
                 // onLoad={onMapLoad}
             >
-                {markers?.map((marker) => (
-                    <Marker
-                        key={marker.id}
-                        position={{ lat: Number(marker.latitude), lng: Number(marker.longitude) }}
-                        // onClick={() => {
-                        //     setSelected(marker);
-                        // }}
-                        // icon={{
-                        //     url: `/bear.svg`,
-                        //     origin: new window.google.maps.Point(0, 0),
-                        //     anchor: new window.google.maps.Point(15, 15),
-                        //     scaledSize: new window.google.maps.Size(30, 30),
-                        // }}
-                    />
-                ))}
+                {markers}
             </GoogleMap>
         </div>
     );
