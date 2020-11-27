@@ -25,7 +25,7 @@ const JourneyMap = ({ shipments, loading }) => {
     if (!shipments) return <h1> LOADING...</h1>;
     const calculateTime = async () =>{
         try {
-            let res = await axios.get("https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=24.766234,46.582030&destinations=24.768533,46.585431&key=AIzaSyDixgXXhDdnbKdqnqrVxJXf3jslKQH5VSY", {headers: {"Access-Control-Allow-Origin": "*"}})
+            let res = await axios.get("https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=24.766234,46.582030&destinations=24.768533,46.585431&key=KEY", {headers: {"Access-Control-Allow-Origin": "*"}})
             setTravelTime(travelTime + res.data.rows.elements.duration.value)
         }
         catch (e) {
