@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import "primeicons/primeicons.css";
+
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.css";
 import "primeflex/primeflex.css";
+import { ProgressSpinner } from "primereact/progressspinner";
 import "../../index.css";
 
 import { connect } from "react-redux";
+import { fetchRegions, fetchTimes, addShipment } from "../../redux/actions";
 
 import moment from "moment";
 import classNames from "classnames";
@@ -14,40 +18,77 @@ import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { MultiSelect } from "primereact/multiselect";
-import { Toolbar } from "primereact/toolbar";
 import { Dropdown } from "primereact/dropdown";
+import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import "./DataTableDemo.css";
+import { GMap } from "primereact/gmap";
+import "./cutom.css";
 
-const Shipments = ({ shipments, statuses }) => {
+const Shipments = ({
+  shipments,
+  statuses,
+  fetchRegions,
+  regions,
+  fetchTimes,
+  times,
+  addShipment,
+}) => {
   let emptyProduct = {
-    id: null,
-    name: "",
-    region: "",
-    driver: null,
-    date: null,
-    inventoryStatus: "DELIVERED",
+    tracking_num: "",
+    receiver_name: "",
+    receiver_phone: "",
   };
 
   const [allshipments, setShipments] = useState(shipments || null);
   const [shipmentDialog, setShipmentDialog] = useState(false);
+  const [shipmentDetailDialog, setShipmentDetailDialog] = useState(false);
 
   const [shipment, setShipment] = useState(emptyProduct);
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
 
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
   const statusesOptions = statuses?.map((status) => status.name);
+  const regionsOptions = regions?.map((region) => region.name);
+  const timeOptions = times?.map((time) => time.time);
+  const google = window.google;
 
+  const options = {
+    center: { lat: 24.7136, lng: 46.6753 },
+    zoom: 11,
+  };
+
+  const overlays = [
+    new google.maps.Marker({
+      position: {
+        lat: parseFloat(shipment.latitude),
+        lng: parseFloat(shipment.longitude),
+      },
+    }),
+  ];
   useEffect(() => {
     setShipments(shipments);
+    fetchRegions();
+    fetchTimes();
   }, [shipments]);
 
-  if (!shipments) return <h1> LOADING...</h1>;
+  if (!shipments)
+    return (
+      <div className="loader mt-5">
+        <ProgressSpinner
+          style={{ width: "200px", height: "200px" }}
+          strokeWidth="8"
+          fill="#EEEEEE"
+          animationDuration=".5s"
+        />
+      </div>
+    );
   const openNew = () => {
     setShipment(emptyProduct);
     setSubmitted(false);
@@ -58,43 +99,34 @@ const Shipments = ({ shipments, statuses }) => {
     setSubmitted(false);
     setShipmentDialog(false);
   };
+  const hideDetailDialog = () => {
+    setShipmentDetailDialog(false);
+  };
 
   const saveProduct = () => {
     setSubmitted(true);
 
-    if (shipment.name.trim()) {
-      let _allshipments = [...allshipments];
-      let _shipment = { ...shipment };
-      if (shipment.id) {
-        const index = findIndexById(shipment.id);
+    toast.current.show({
+      severity: "success",
+      summary: "Successful",
+      detail: "Shipment Added",
+      life: 3000,
+    });
 
-        _allshipments[index] = _shipment;
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Shipment Added",
-          life: 3000,
-        });
-      } else {
-        _shipment.id = createId();
-        _allshipments.push(_shipment);
-        toast.current.show({
-          severity: "success",
-          summary: "Successful",
-          detail: "Shipment Created",
-          life: 3000,
-        });
-      }
-
-      setShipments(_allshipments);
-      setShipmentDialog(false);
-      setShipment(emptyProduct);
-    }
+    // setShipments(_allshipments);
+    setShipmentDialog(false);
+    setShipment(emptyProduct);
+    // addShipment({
+    //   tracking_num: "12",
+    //   receiver_name: "ali",
+    //   receiver_phone: "05878",
+    //   added_by: "su",
+    // });
   };
 
   const editProduct = (shipment) => {
     setShipment({ ...shipment });
-    setShipmentDialog(true);
+    setShipmentDetailDialog(true);
   };
 
   const findIndexById = (id) => {
@@ -143,29 +175,25 @@ const Shipments = ({ shipments, statuses }) => {
 
   const leftToolbarTemplate = () => {
     return (
-      <React.Fragment>
-        <Button
-          label="New shipment"
-          icon="pi pi-plus"
-          className="p-button-success"
-          onClick={openNew}
-        />
-      </React.Fragment>
+      <Button
+        label="New shipment"
+        icon="pi pi-plus"
+        className="p-button-success"
+        onClick={openNew}
+      />
     );
   };
 
   const statusBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
-        <span
-          className={classNames(
-            "customer-badge",
-            "status-" + rowData.status.name
-          )}
-        >
-          {rowData.status.name}
-        </span>
-      </React.Fragment>
+      <span
+        className={classNames(
+          "customer-badge",
+          "status-" + rowData.status.name
+        )}
+      >
+        {rowData.status.name}
+      </span>
     );
   };
   const renderStatusFilter = () => {
@@ -177,7 +205,6 @@ const Shipments = ({ shipments, statuses }) => {
         itemTemplate={statusItemTemplate}
         filterBy={selectedStatus}
         placeholder="Select a Status"
-        className="p-column-filter"
       />
     );
   };
@@ -189,51 +216,110 @@ const Shipments = ({ shipments, statuses }) => {
     );
   };
   const onStatusFilterChange = (event) => {
-    dt.current.filter(event.value, "status.name", "equals");
+    dt.current.filter(event.value, "status.name", "in");
 
     setSelectedStatus(event.value);
   };
+  const regionBodyTemplate = (rowData) => {
+    return (
+      <span className={`order-badge status-${rowData}`}>
+        {rowData.region?.name}
+      </span>
+    );
+  };
+  const renderRegionFilter = () => {
+    return (
+      <Dropdown
+        value={selectedRegion}
+        options={regionsOptions}
+        onChange={onRegionFilterChange}
+        itemTemplate={regionItemTemplate}
+        showClear
+        placeholder="Select a Region"
+      />
+    );
+  };
+  const regionItemTemplate = (option) => {
+    return (
+      <span className={classNames("customer-badge", "status-" + option)}>
+        {option}
+      </span>
+    );
+  };
+  const onRegionFilterChange = (event) => {
+    dt.current.filter(event.value, "region.name", "equals");
+
+    setSelectedRegion(event.value);
+  };
+
   const journeyBodyTemplate = (rowData) => {
     return (
-      <span className={`shipment-badge driver-${rowData.journey}`}>
+      <span className={`journy-badge status-${rowData.journey}`}>
         {rowData.journey}
       </span>
     );
   };
   const trackinNumberBodyTemplate = (rowData) => {
     return (
-      <span className={`shipment-badge status-${rowData.tracking_num}`}>
+      <span className={`customer-badge status-${rowData.tracking_num}`}>
         {rowData.tracking_num}
       </span>
     );
   };
   const customerBodyTemplate = (rowData) => {
     return (
-      <span className={`shipment-badge status-${rowData.receiver_name}`}>
+      <span className={`customer-badge status-${rowData.receiver_name}`}>
         {rowData.receiver_name}
       </span>
     );
   };
-  //   const regionBodyTemplate = (rowData) => {
-  //     return <span>{rowData.region.name}</span>;
-  //   };
+
   const dateBodyTemplate = (rowData) => {
     return (
-      <span className={`shipment-badge status-${rowData}`}>
+      <span className={`customer-badge status-${rowData}`}>
         {moment(rowData.date_added).format("YYYY-MM-DD")}
       </span>
     );
   };
+  const timeBodyTemplate = (rowData) => {
+    return (
+      <span className={`product-badge status-${rowData}`}>
+        {rowData.preferred_time?.time}
+      </span>
+    );
+  };
+  const renderTimeFilter = () => {
+    return (
+      <MultiSelect
+        value={selectedTime}
+        options={timeOptions}
+        onChange={onTimeFilterChange}
+        itemTemplate={timeItemTemplate}
+        filterBy={selectedTime}
+        placeholder="Select Time"
+      />
+    );
+  };
+  const timeItemTemplate = (option) => {
+    return (
+      <span className={classNames("customer-badge", "status-" + option)}>
+        {option}
+      </span>
+    );
+  };
+  const onTimeFilterChange = (event) => {
+    dt.current.filter(event.value, "preferred_time.time", "in");
+
+    setSelectedTime(event.value);
+  };
 
   const actionBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
-        <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success ml-5"
-          onClick={() => editProduct(rowData)}
-        />
-      </React.Fragment>
+      <Button
+        icon="pi pi-file-o "
+        className="p-button-rounded p-button-success p-ml-2"
+        onClick={() => editProduct(rowData)}
+      />
     );
   };
 
@@ -251,7 +337,7 @@ const Shipments = ({ shipments, statuses }) => {
     </div>
   );
   const shipmentDialogFooter = (
-    <React.Fragment>
+    <>
       <Button
         label="Cancel"
         icon="pi pi-times"
@@ -264,19 +350,22 @@ const Shipments = ({ shipments, statuses }) => {
         className="p-button-text"
         onClick={saveProduct}
       />
-    </React.Fragment>
+    </>
   );
 
   console.log(allshipments);
 
   const statusFilterElement = renderStatusFilter();
+  const regionFilterElement = renderRegionFilter();
+  const timeFilterElement = renderTimeFilter();
+
   return (
-    <div className="shipments">
+    <div className="shipments ui-toolbar-group-left ">
       <div className="datatable-crud-demo">
         <Toast ref={toast} />
 
         <div className="card">
-          <Toolbar className="p-mb-4" left={leftToolbarTemplate}></Toolbar>
+          <Toolbar className="p-mb-2" left={leftToolbarTemplate}></Toolbar>
 
           <DataTable
             ref={dt}
@@ -285,15 +374,15 @@ const Shipments = ({ shipments, statuses }) => {
             onSelectionChange={(e) => setSelectedProducts(e.value)}
             dataKey="id"
             paginator
-            rows={10}
-            rowsPerPageOptions={[5, 10, 25]}
+            rows={25}
+            rowsPerPageOptions={[10, 25, 50]}
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Shipments"
             globalFilter={globalFilter}
             header={header}
           >
             <Column
-              field="code"
+              field="tracking_num"
               header="Tracking Number"
               body={trackinNumberBodyTemplate}
             ></Column>
@@ -304,16 +393,17 @@ const Shipments = ({ shipments, statuses }) => {
             ></Column>
             {/* <Column field="receiver_phone" header="Customer Phone"  ></Column> */}
             <Column
-              field="date"
-              header="Date"
+              field="date_added"
+              header="Delivery Date"
               body={dateBodyTemplate}
               sortable
             ></Column>
             <Column
               field="preferred_time.time"
               header="Preferred Time"
-
-              //   body={journeyBodyTemplate}
+              body={timeBodyTemplate}
+              filter
+              filterElement={timeFilterElement}
             ></Column>
             <Column
               field="journey"
@@ -324,25 +414,25 @@ const Shipments = ({ shipments, statuses }) => {
             <Column
               field="region.name"
               header="Region"
-              //   body={regionBodyTemplate}
-              sortable
+              body={regionBodyTemplate}
+              filter
+              filterElement={regionFilterElement}
             ></Column>
 
             <Column
               field="status.name"
               header="Status"
               body={statusBodyTemplate}
-              sortable
               filter
               filterElement={statusFilterElement}
             />
-            <Column body={actionBodyTemplate}></Column>
+            <Column header="Details" body={actionBodyTemplate}></Column>
           </DataTable>
         </div>
 
         <Dialog
           visible={shipmentDialog}
-          style={{ width: "600px" }}
+          style={{ width: "1000px" }}
           header="Shipment Details"
           modal
           className="p-fluid"
@@ -350,11 +440,11 @@ const Shipments = ({ shipments, statuses }) => {
           onHide={hideDialog}
         >
           <div className="p-field">
-            <label htmlFor="id">Tracking num</label>
+            <label htmlFor="id">Tracking Number</label>
             <InputText
               id="id"
               value={shipment.tracking_num}
-              onChange={(e) => onInputChange(e, "id")}
+              onChange={(e) => onInputChange(e, "tracking_num")}
               required
               autoFocus
               className={classNames({
@@ -366,11 +456,11 @@ const Shipments = ({ shipments, statuses }) => {
             )}
           </div>
           <div className="p-field">
-            <label htmlFor="name">Receiver name</label>
+            <label htmlFor="name">Customer name</label>
             <InputText
               id="name"
               value={shipment.receiver_name}
-              onChange={(e) => onInputChange(e, "name")}
+              onChange={(e) => onInputChange(e, "receiver_name")}
               required
               autoFocus
               className={classNames({
@@ -378,15 +468,15 @@ const Shipments = ({ shipments, statuses }) => {
               })}
             />
             {submitted && !shipment.receiver_name && (
-              <small className="p-invalid">Receiver name is required.</small>
+              <small className="p-invalid">Customer name is required.</small>
             )}
           </div>
           <div className="p-field">
-            <label htmlFor="name">Receiver phone</label>
+            <label htmlFor="name">Customer phone</label>
             <InputText
               id="phone"
               value={shipment.receiver_phone}
-              onChange={(e) => onInputChange(e, "phone")}
+              onChange={(e) => onInputChange(e, "receiver_phone")}
               required
               autoFocus
               className={classNames({
@@ -394,14 +484,86 @@ const Shipments = ({ shipments, statuses }) => {
               })}
             />
             {submitted && !shipment.receiver_phone && (
-              <small className="p-invalid">Receiver phone is required.</small>
+              <small className="p-invalid">Customer phone is required.</small>
             )}
+          </div>
+        </Dialog>
+        <Dialog
+          visible={shipmentDetailDialog}
+          style={{ width: "1000px" }}
+          header={`${shipment.receiver_name}'s Shipment Details`}
+          modal
+          className="p-fluid"
+          onHide={hideDetailDialog}
+        >
+          {/* <div className="p-field">
+            <label htmlFor="id">Tracking Number</label>
+            <InputText id="id" value={shipment.tracking_num} disabled />
+            <div className="p-mb-3 p-text-bold">{shipment.tracking_num}</div>
+          </div>
+          <div className="p-field">
+            <label htmlFor="name">Customer name</label>
+            <InputText id="name" value={shipment.receiver_name} disabled />
+          </div>
+          <div className="p-field">
+            <label htmlFor="name">Customer phone</label>
+            <InputText id="phone" value={shipment.receiver_phone} disabled />
+          </div> */}
+          <table className="table table-bordered text-center ">
+            <thead>
+              <tr>
+                <th scope="col">Tracking Number</th>
+                <th scope="col">Customer name</th>
+                <th scope="col">Customer Phone</th>
+                <th scope="col">Delivery Date</th>
+                <th scope="col">Place Description</th>
+                <th scope="col">Added By</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{shipment.tracking_num}</td>
+                <td>{shipment.receiver_name}</td>
+                <td>{shipment.receiver_phone}</td>
+                <td>{moment(shipment.date_added).format("YYYY-MM-DD")}</td>
+                <td>{shipment.place_description}</td>
+                <td>{shipment.added_by?.username}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div className="p-field">
+            <label htmlFor="name" className="text-primary">
+              Customer Location
+            </label>
+            <GMap
+              options={options}
+              style={{ width: "100%", minHeight: "320px" }}
+              overlays={overlays}
+            />
+          </div>
+          <div className="p-field">
+            <button
+              className="btn rs-btn-primary"
+              onClick={() => window.open(shipment.location)}
+            >
+              Cutomer's Location on Google Maps
+            </button>
           </div>
         </Dialog>
       </div>
     </div>
   );
 };
-const mapStateToProps = ({ shipments, statuses }) => ({ shipments, statuses });
-
-export default connect(mapStateToProps)(Shipments);
+const mapStateToProps = ({ shipments, statuses, regions, times }) => ({
+  shipments,
+  statuses,
+  regions,
+  times,
+});
+const mapDispatchToProps = {
+  fetchRegions,
+  fetchTimes,
+  addShipment,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Shipments);
