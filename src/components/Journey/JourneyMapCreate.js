@@ -25,46 +25,22 @@ const JourneyMap = ({ shipments, createJourney }) => {
     const [previousLength, setPreviousLength] = useState(0)
 
     useEffect(() => {
-            try {
-                if (selected.length < previousLength) {
-                    setPreviousLength(selected.length)
-                    setTravelTime(0)
-                    if (selected.length > 1) {
-                        let newTravelTime = 0
-                        for (let i = 1; i < selected.length; i++) {
-                            let originShipment = shipments.find(shipment => shipment.id === selected[i - 1])
-                            let destinationShipment = shipments.find(shipment => shipment.id === selected[i])
-                            let origin = new window.google.maps.LatLng(Number(originShipment.latitude), Number(originShipment.longitude));
-                            let destination = new window.google.maps.LatLng(Number(destinationShipment.latitude), Number(originShipment.longitude))
-                            const callback = (response) => {
-                                console.log(response)
-                                let travel = Math.ceil(response.rows[0].elements[0].duration.value / 60) + 5
-                                newTravelTime += travel
-                                setTravelTime(newTravelTime)
-                                console.log(travelTime)
-                            }
-                            let service = new window.google.maps.DistanceMatrixService();
-                            service.getDistanceMatrix(
-                                {
-                                    origins: [origin],
-                                    destinations: [destination],
-                                    travelMode: 'DRIVING',
-                                }, callback);
-                        }
-                    }
-
-                }
-                else {
-                    setPreviousLength(selected.length)
-                    if (selected.length > 1) {
-                        let originShipment = shipments.find(shipment => shipment.id === selected[selected.length - 2])
-                        let destinationShipment = shipments.find(shipment => shipment.id === selected[selected.length - 1])
+        try {
+            if (selected.length < previousLength) {
+                setPreviousLength(selected.length)
+                setTravelTime(0)
+                if (selected.length > 1) {
+                    let newTravelTime = 0
+                    for (let i = 1; i < selected.length; i++) {
+                        let originShipment = shipments.find(shipment => shipment.id === selected[i - 1])
+                        let destinationShipment = shipments.find(shipment => shipment.id === selected[i])
                         let origin = new window.google.maps.LatLng(Number(originShipment.latitude), Number(originShipment.longitude));
                         let destination = new window.google.maps.LatLng(Number(destinationShipment.latitude), Number(originShipment.longitude))
                         const callback = (response) => {
                             console.log(response)
                             let travel = Math.ceil(response.rows[0].elements[0].duration.value / 60) + 5
-                            setTravelTime(travelTime + travel)
+                            newTravelTime += travel
+                            setTravelTime(newTravelTime)
                             console.log(travelTime)
                         }
                         let service = new window.google.maps.DistanceMatrixService();
@@ -76,10 +52,34 @@ const JourneyMap = ({ shipments, createJourney }) => {
                             }, callback);
                     }
                 }
+
             }
-            catch (e) {
-                console.log(e)
+            else {
+                setPreviousLength(selected.length)
+                if (selected.length > 1) {
+                    let originShipment = shipments.find(shipment => shipment.id === selected[selected.length - 2])
+                    let destinationShipment = shipments.find(shipment => shipment.id === selected[selected.length - 1])
+                    let origin = new window.google.maps.LatLng(Number(originShipment.latitude), Number(originShipment.longitude));
+                    let destination = new window.google.maps.LatLng(Number(destinationShipment.latitude), Number(originShipment.longitude))
+                    const callback = (response) => {
+                        console.log(response)
+                        let travel = Math.ceil(response.rows[0].elements[0].duration.value / 60) + 5
+                        setTravelTime(travelTime + travel)
+                        console.log(travelTime)
+                    }
+                    let service = new window.google.maps.DistanceMatrixService();
+                    service.getDistanceMatrix(
+                        {
+                            origins: [origin],
+                            destinations: [destination],
+                            travelMode: 'DRIVING',
+                        }, callback);
+                }
             }
+        }
+        catch (e) {
+            console.log(e)
+        }
 
     }, [selected]);
 
@@ -125,10 +125,8 @@ const JourneyMap = ({ shipments, createJourney }) => {
     );
 };
 
-const mapStateToProps = ({ journeys, shipments }) => ({
+const mapStateToProps = ({ journeys }) => ({
     journeys,
-    shipments,
-    loading: !shipments,
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -8,6 +8,7 @@ const Journey = () => {
             <Link to="/journeys/current/"><h6>Current</h6></Link>
             <Link to="/journeys/completed/"><h6>Completed</h6></Link>
             <Link to="/journeys/map/"><h6>Map</h6></Link>
+            <Link to="/journeys/create/"><h6>Create</h6></Link>
         </div>
     );
 };
