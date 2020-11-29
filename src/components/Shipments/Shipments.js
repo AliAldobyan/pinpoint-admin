@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-
+import { Redirect } from "react-router-dom";
 import "primeicons/primeicons.css";
 
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -33,6 +33,7 @@ const Shipments = ({
   fetchTimes,
   times,
   addShipment,
+  user,
 }) => {
   let emptyProduct = {
     tracking_num: "",
@@ -358,14 +359,14 @@ const Shipments = ({
   const statusFilterElement = renderStatusFilter();
   const regionFilterElement = renderRegionFilter();
   const timeFilterElement = renderTimeFilter();
-
+  if (!user) return <Redirect to="/login" />;
   return (
     <div className="shipments ui-toolbar-group-left ">
       <div className="datatable-crud-demo">
         <Toast ref={toast} />
 
         <div className="card">
-          <Toolbar className="p-mb-2" left={leftToolbarTemplate}></Toolbar>
+          <Toolbar className="p-mb-2" right={leftToolbarTemplate}></Toolbar>
 
           <DataTable
             ref={dt}
@@ -496,19 +497,6 @@ const Shipments = ({
           className="p-fluid"
           onHide={hideDetailDialog}
         >
-          {/* <div className="p-field">
-            <label htmlFor="id">Tracking Number</label>
-            <InputText id="id" value={shipment.tracking_num} disabled />
-            <div className="p-mb-3 p-text-bold">{shipment.tracking_num}</div>
-          </div>
-          <div className="p-field">
-            <label htmlFor="name">Customer name</label>
-            <InputText id="name" value={shipment.receiver_name} disabled />
-          </div>
-          <div className="p-field">
-            <label htmlFor="name">Customer phone</label>
-            <InputText id="phone" value={shipment.receiver_phone} disabled />
-          </div> */}
           <table className="table table-bordered text-center ">
             <thead>
               <tr>
@@ -555,11 +543,12 @@ const Shipments = ({
     </div>
   );
 };
-const mapStateToProps = ({ shipments, statuses, regions, times }) => ({
+const mapStateToProps = ({ shipments, statuses, regions, times, user }) => ({
   shipments,
   statuses,
   regions,
   times,
+  user,
 });
 const mapDispatchToProps = {
   fetchRegions,
