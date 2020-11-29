@@ -7,6 +7,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 import Home from "./components/HomePage/Home";
 import Shipments from "./components/Shipments/Shipments";
+import Login from "./components/Authentication/Login";
 import Journey from "./components/Journey/Journey";
 import JourneyList from "./components/Journey/JourneyList";
 import JourneyCurrent from "./components/Journey/JourneyCurrent";
@@ -18,25 +19,26 @@ function App() {
     <>
       <Navbar />
       <Switch>
+        <Route path="/login" component={Login} />
         <Route path="/" exact component={Home} />
         <Route path="/shipments" component={Shipments} />
       </Switch>
 
-        {/*<Journey/>*/}
-        {/*<Switch>*/}
-        {/*    <Route path="/journeys/list/">*/}
-        {/*        <JourneyList/>*/}
-        {/*    </Route>*/}
-        {/*    <Route path="/journeys/current/">*/}
-        {/*        <JourneyCurrent/>*/}
-        {/*    </Route>*/}
-        {/*    <Route path="/journeys/completed/">*/}
-        {/*        <JourneyCompleted/>*/}
-        {/*    </Route>*/}
-        {/*    <Route path="/journeys/map/">*/}
-        {/*        <JourneyMap/>*/}
-        {/*    </Route>*/}
-        {/*</Switch>*/}
+      {/*<Journey/>*/}
+      {/*<Switch>*/}
+      {/*    <Route path="/journeys/list/">*/}
+      {/*        <JourneyList/>*/}
+      {/*    </Route>*/}
+      {/*    <Route path="/journeys/current/">*/}
+      {/*        <JourneyCurrent/>*/}
+      {/*    </Route>*/}
+      {/*    <Route path="/journeys/completed/">*/}
+      {/*        <JourneyCompleted/>*/}
+      {/*    </Route>*/}
+      {/*    <Route path="/journeys/map/">*/}
+      {/*        <JourneyMap/>*/}
+      {/*    </Route>*/}
+      {/*</Switch>*/}
     </>
   );
 }

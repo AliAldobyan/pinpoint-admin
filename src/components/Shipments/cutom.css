@@ -20,3 +20,7 @@
   align-items: center;
   justify-content: center;
 }
+
+.p-button-success {
+  background-color: #3f4f83 !important;
+}
