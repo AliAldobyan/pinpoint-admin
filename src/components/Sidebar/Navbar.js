@@ -1,19 +1,22 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import { logout } from "../../redux/actions";
+
 import * as FaIcons from "react-icons/fa";
-import * as AiIcons from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
 import "./Navbar.css";
 import { IconContext } from "react-icons";
 
-function Navbar() {
+function Navbar({ user, logout }) {
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
 
   return (
     <>
-      <IconContext.Provider value={{ color: "#f9f9f9" }}>
+      <IconContext.Provider value={{ color: "#3f4f83" }}>
         <div className="navbar">
           <Link to="#" className="menu-bars">
             <FaIcons.FaBars onClick={showSidebar} />
@@ -29,16 +32,30 @@ function Navbar() {
                 <li key={index} className={item.cName}>
                   <Link to={item.path}>
                     {item.icon}
-                    <span>{item.title}</span>
+                    <span className="span-space">{item.title}</span>
                   </Link>
                 </li>
               );
             })}
+            {user ? (
+              <button
+                className="btn btn-lg btn-info  btn-block "
+                onClick={logout}
+              >
+                Logout
+              </button>
+            ) : (
+              ""
+            )}
           </ul>
         </nav>
       </IconContext.Provider>
     </>
   );
 }
+const mapStateToProps = ({ user }) => ({ user });
+const mapDispatchToProps = (dispatch) => ({
+  logout: () => dispatch(logout()),
+});
 
-export default Navbar;
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar);

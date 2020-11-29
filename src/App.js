@@ -7,6 +7,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 import Home from "./components/HomePage/Home";
 import Shipments from "./components/Shipments/Shipments";
+import Login from "./components/Authentication/Login";
 import Journey from "./components/Journey/Journey";
 import JourneyList from "./components/Journey/JourneyList";
 import JourneyCurrent from "./components/Journey/JourneyCurrent";
@@ -19,6 +20,7 @@ function App() {
     <>
       <Navbar />
       <Switch>
+        <Route path="/login" component={Login} />
         <Route path="/" exact component={Home} />
         <Route path="/shipments" component={Shipments} />
       </Switch>
