@@ -9,7 +9,7 @@
 
 .home,
 .shipments,
-.products,
+.journeyslist,
 .loader {
   display: flex;
   height: 100vh;

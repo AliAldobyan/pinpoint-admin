@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { logout } from "../../redux/actions";
 
 import * as FaIcons from "react-icons/fa";
+import * as AiIcons from "react-icons/ai";
 
 import { Link } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
@@ -17,35 +18,61 @@ function Navbar({ user, logout }) {
   return (
     <>
       <IconContext.Provider value={{ color: "#3f4f83" }}>
-        <div className="navbar">
+        {/* <div className="navbar">
           <Link to="#" className="menu-bars">
             <FaIcons.FaBars onClick={showSidebar} />
           </Link>
-        </div>
+        </div> */}
         <nav className={"nav-menu active"}>
           <ul className="nav-menu-items">
             <li className="navbar-toggle">
               <h2 className="ml-5">Pinpoint</h2>
             </li>
-            {SidebarData.map((item, index) => {
-              return (
-                <li key={index} className={item.cName}>
-                  <Link to={item.path}>
-                    {item.icon}
-                    <span className="span-space">{item.title}</span>
+
+            {user ? (
+              <>
+                ({" "}
+                <li className="nav-text">
+                  <Link to="/">
+                    <AiIcons.AiFillHome />
+                    <span className="span-space">Home</span>
                   </Link>
                 </li>
-              );
-            })}
-            {user ? (
-              <button
-                className="btn btn-lg btn-info  btn-block "
-                onClick={logout}
-              >
-                Logout
-              </button>
+                <li className="nav-text">
+                  <Link to="/shipments/">
+                    <FaIcons.FaTruck />
+                    <span className="span-space">Shipments</span>
+                  </Link>
+                </li>
+                <li className="nav-text">
+                  <Link to="/journeys/list/">
+                    <FaIcons.FaRoute />
+                    <span className="span-space">Journeys</span>
+                  </Link>
+                </li>
+                <li className="nav-text">
+                  <Link to="/journeys/list/">
+                    <FaIcons.FaRoute />
+                    <span className="span-space">Shipments Map</span>
+                  </Link>
+                </li>
+                <button className="btn btn-lg btn-info   " onClick={logout}>
+                  Logout
+                </button>
+              </>
             ) : (
-              ""
+              <>
+                <li className="nav-text">
+                  <Link to="/">
+                    <AiIcons.AiFillHome />
+                    <span className="span-space">Home</span>
+                  </Link>
+                </li>
+                <Link to="/login">
+                  {" "}
+                  <button className="btn  btn-info  btn-lg">Login</button>
+                </Link>
+              </>
             )}
           </ul>
         </nav>
