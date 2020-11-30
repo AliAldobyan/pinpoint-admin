@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import "primeicons/primeicons.css";
 
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -60,11 +60,13 @@ const JourneyList = ({ journeys, user }) => {
 
   const leftToolbarTemplate = () => {
     return (
-      <Button
-        label="New journey"
-        icon="pi pi-plus"
-        className="p-button-success"
-      />
+      <Link to="/journeys/create/">
+        <Button
+          label="New journey"
+          icon="pi pi-plus"
+          className="p-button-success"
+        />
+      </Link>
     );
   };
 
@@ -76,7 +78,7 @@ const JourneyList = ({ journeys, user }) => {
             not completed
           </span>
         ) : (
-          <span className={classNames("customer-badge", "status-delivered")}>
+          <span className={classNames("customer-badge", "status-Delivered")}>
             completed
           </span>
         )}
@@ -302,7 +304,7 @@ const JourneyList = ({ journeys, user }) => {
               body={journeyIdBodyTemplate}
             ></Column>
             <Column
-              field="driver.user.first_name "
+              field="driver.user.first_name"
               header="Driver"
               body={driverBodyTemplate}
             ></Column>
