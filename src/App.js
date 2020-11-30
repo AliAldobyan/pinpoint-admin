@@ -20,9 +20,10 @@ function App() {
     <>
       <Navbar />
       <Switch>
-        <Route path="/login" component={Login} />
+        <Route path="/login/" component={Login} />
         <Route path="/" exact component={Home} />
-        <Route path="/shipments" component={Shipments} />
+        <Route path="/shipments/" component={Shipments} />
+        <Route path="/journeys/list/" component={JourneyList} />
       </Switch>
 
         {/*<Journey/>*/}

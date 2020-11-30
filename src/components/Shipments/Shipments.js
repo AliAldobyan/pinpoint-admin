@@ -114,15 +114,13 @@ const Shipments = ({
       life: 3000,
     });
 
-    // setShipments(_allshipments);
+    addShipment({
+      tracking_num: shipment.tracking_num,
+      receiver_name: shipment.receiver_name,
+      receiver_phone: shipment.receiver_phone,
+    });
     setShipmentDialog(false);
     setShipment(emptyProduct);
-    // addShipment({
-    //   tracking_num: "12",
-    //   receiver_name: "ali",
-    //   receiver_phone: "05878",
-    //   added_by: "su",
-    // });
   };
 
   const editProduct = (shipment) => {
@@ -130,44 +128,8 @@ const Shipments = ({
     setShipmentDetailDialog(true);
   };
 
-  const findIndexById = (id) => {
-    let index = -1;
-    for (let i = 0; i < allshipments.length; i++) {
-      if (allshipments[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-
-    return index;
-  };
-
-  const createId = () => {
-    let id = "";
-    let chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (let i = 0; i < 5; i++) {
-      id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
-  };
-
-  const onCategoryChange = (e) => {
-    let _shipment = { ...shipment };
-    _shipment["status"] = e.value;
-    setShipment(_shipment);
-  };
-
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || "";
-    let _shipment = { ...shipment };
-    _shipment[`${name}`] = val;
-
-    setShipment(_shipment);
-  };
-
-  const onInputNumberChange = (e, name) => {
-    const val = e.value || 0;
     let _shipment = { ...shipment };
     _shipment[`${name}`] = val;
 
@@ -504,7 +466,6 @@ const Shipments = ({
                 <th scope="col">Customer name</th>
                 <th scope="col">Customer Phone</th>
                 <th scope="col">Delivery Date</th>
-                <th scope="col">Place Description</th>
                 <th scope="col">Added By</th>
               </tr>
             </thead>
@@ -514,7 +475,6 @@ const Shipments = ({
                 <td>{shipment.receiver_name}</td>
                 <td>{shipment.receiver_phone}</td>
                 <td>{moment(shipment.date_added).format("YYYY-MM-DD")}</td>
-                <td>{shipment.place_description}</td>
                 <td>{shipment.added_by?.username}</td>
               </tr>
             </tbody>
