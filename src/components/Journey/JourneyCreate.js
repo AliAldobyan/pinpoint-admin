@@ -15,7 +15,7 @@ const JourneyCreate = ({ shipments, createJourney }) => {
 
     if (!shipments) return <h1>Loading...</h1>
 
-    const filteredShipments = shipments.filter(shipment => shipment.status?.id === 1 || shipment.status?.id === 4)
+    const filteredShipments = shipments.filter(shipment => shipment.status?.id === 2 || shipment.status?.id === 4)
 
     const handleClick = () => {
         createJourney({packages_list: selectedShipments.map(shipment => shipment.id)})
@@ -27,23 +27,13 @@ const JourneyCreate = ({ shipments, createJourney }) => {
     const header = (
         <div className="table-header">
             <p>Travel Time: {travelTime}</p>
-            {/*{selectedShipments.length >= 1 && <button className="btn btn-primary" onClick={handleClick}>Create Journey</button>}*/}
-
-      {/*      <h5 className="p-m-0">Manage Shipments</h5>*/}
-      {/*      <span className="p-input-icon-left">*/}
-      {/*  <i className="pi pi-search" />*/}
-      {/*  <InputText*/}
-      {/*      type="search"*/}
-      {/*      onInput={(e) => {}}*/}
-      {/*      placeholder="Search..."*/}
-      {/*  />*/}
-      {/*</span>*/}
+            {selectedShipments.length >= 1 && <button className="btn btn-primary" onClick={handleClick}>Create Journey</button>}
         </div>
     );
     const dateBodyTemplate = (rowData) => {
         return (
             <span >
-        {moment(rowData.date_added).format("YYYY-MM-DD")}
+        {moment(rowData.date_modified).format("YYYY-MM-DD")}
       </span>
         );
     };
@@ -58,11 +48,11 @@ const JourneyCreate = ({ shipments, createJourney }) => {
                     <Column field="id" header="ID"/>
                     <Column field="tracking_num" header="Tracking Number"/>
                     <Column field="receiver_name" header="Receiver Name"/>
-                    <Column field="receiver_phone" header="Quantity"/>
-                    <Column field="date_added" header="Quantity" body={dateBodyTemplate} sortable/>
-                    <Column field="added_by.first_name" header="Quantity"/>
-                    <Column field="preferred_time.time" header="Quantity"/>
-                    <Column field="status.name" header="Quantity"/>
+                    <Column field="receiver_phone" header="Receiver Phone"/>
+                    <Column field="date_modified" header="Date Added" body={dateBodyTemplate} sortable/>
+                    <Column field="added_by.username" header="Added By"/>
+                    <Column field="preferred_time.time" header="Preferred Time" sortable/>
+                    <Column field="status.name" header="Status"/>
                     {/*<Column field="date_added" header="Quantity"/>*/}
                 </DataTable>
             </div>
