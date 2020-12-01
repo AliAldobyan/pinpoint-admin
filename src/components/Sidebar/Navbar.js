@@ -5,7 +5,7 @@ import { logout } from "../../redux/actions";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
 import "./Navbar.css";
 import { IconContext } from "react-icons";
@@ -19,9 +19,9 @@ function Navbar({ user, logout }) {
     <>
       <IconContext.Provider value={{ color: "#3f4f83" }}>
         {/* <div className="navbar">
-          <Link to="#" className="menu-bars">
+          <NavLink to="#" className="menu-bars">
             <FaIcons.FaBars onClick={showSidebar} />
-          </Link>
+          </NavLink>
         </div> */}
         <nav className={"nav-menu active"}>
           <ul className="nav-menu-items">
@@ -33,28 +33,28 @@ function Navbar({ user, logout }) {
               <>
                 ({" "}
                 <li className="nav-text">
-                  <Link to="/">
+                  <NavLink to="/" exact activeClassName="active">
                     <AiIcons.AiFillHome />
                     <span className="span-space">Home</span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-text">
-                  <Link to="/shipments/">
+                  <NavLink to="/shipments/" exact activeClassName="active">
                     <FaIcons.FaTruck />
                     <span className="span-space">Shipments</span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-text">
-                  <Link to="/journeys/list/">
+                  <NavLink to="/journeys/list/" exact activeClassName="active">
                     <FaIcons.FaRoute />
                     <span className="span-space">Journeys</span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="nav-text">
-                  <Link to="/map/">
-                    <FaIcons.FaRoute />
+                  <NavLink to="/map/" exact activeClassName="active">
+                    <FaIcons.FaMapMarkedAlt />
                     <span className="span-space">Shipments Map</span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <button className="btn btn-lg btn-info   " onClick={logout}>
                   Logout
@@ -63,15 +63,15 @@ function Navbar({ user, logout }) {
             ) : (
               <>
                 <li className="nav-text">
-                  <Link to="/">
+                  <NavLink to="/" exact activeClassName="active">
                     <AiIcons.AiFillHome />
                     <span className="span-space">Home</span>
-                  </Link>
+                  </NavLink>
                 </li>
-                <Link to="/login">
+                <NavLink to="/login">
                   {" "}
                   <button className="btn  btn-info  btn-lg">Login</button>
-                </Link>
+                </NavLink>
               </>
             )}
           </ul>

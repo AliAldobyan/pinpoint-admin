@@ -16,6 +16,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
+import { InputSwitch } from "primereact/inputswitch";
 import { MultiSelect } from "primereact/multiselect";
 import { Dropdown } from "primereact/dropdown";
 import { Toolbar } from "primereact/toolbar";
@@ -32,9 +33,9 @@ const JourneyList = ({ journeys, user }) => {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [openModal, setOpenModal] = useState(false)
-  const [journeyToAssign, setJourneyToAssign] = useState(null)
-  const [submitted, setSubmitted] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [journeyToAssign, setJourneyToAssign] = useState(null);
+  const [checked, setChecked] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
@@ -49,9 +50,9 @@ const JourneyList = ({ journeys, user }) => {
   }, [journeys]);
 
   const handleAssignClick = (rowData) => {
-    setJourneyToAssign(rowData)
-    setOpenModal(true)
-  }
+    setJourneyToAssign(rowData);
+    setOpenModal(true);
+  };
 
   if (!journeys)
     return (
@@ -81,8 +82,8 @@ const JourneyList = ({ journeys, user }) => {
     return (
       <>
         {rowData.is_completed === false ? (
-          <span className={classNames("customer-badge", "status-failed")}>
-            not completed
+          <span className={classNames("customer-badge", "status-Pending")}>
+            Active
           </span>
         ) : (
           <span className={classNames("customer-badge", "status-Delivered")}>
@@ -170,7 +171,12 @@ const JourneyList = ({ journeys, user }) => {
             {`${rowData.driver?.user.first_name} ${rowData.driver?.user.last_name}`}
           </span>
         ) : (
-          <button className="btn btn-primary" onClick={() => handleAssignClick(rowData)}>Assign Driver</button>
+          <button
+            className="btn btn-primary"
+            onClick={() => handleAssignClick(rowData)}
+          >
+            Assign Driver
+          </button>
         )}
       </>
     );
@@ -230,6 +236,15 @@ const JourneyList = ({ journeys, user }) => {
   };
 
   const actionBodyTemplate = (rowData) => {
+    let counter = 0;
+    const len = rowData?.packages.length;
+
+    rowData?.packages.forEach((p) => {
+      if (p.status?.name === "Delivered") {
+        counter++;
+      }
+    });
+
     return (
       <>
         {rowData.is_completed === true ? (
@@ -242,7 +257,7 @@ const JourneyList = ({ journeys, user }) => {
               aria-valuemin="0"
               aria-valuemax="10"
             >
-              10/10
+              {counter}/{len}
             </div>
           </div>
         ) : (
@@ -253,31 +268,48 @@ const JourneyList = ({ journeys, user }) => {
               style={{ width: "50%" }}
               aria-valuenow="50"
               aria-valuemin="0"
-              aria-valuemax="10"
+              aria-valuemax={len}
             >
-              5/10
+              {counter}/{len}
             </div>
           </div>
         )}
       </>
     );
   };
-
+  const handleClick = (e) => {
+    setChecked(e.value);
+    dt.current.filter(e.value, "is_completed", "in");
+    console.log(dt.current);
+  };
   const header = (
-    <div className="table-header">
-      <h5 className="p-m-0">Journeys List</h5>
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          type="search"
-          onInput={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search..."
+    <>
+      <div className="table-header">
+        <h4 className="p-m-0">Journeys List</h4>
+
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <InputText
+            type="search"
+            onInput={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search..."
+          />
+        </span>
+      </div>
+
+      <div className="container text-center">
+        {" "}
+        <h5 className="p-m-0">Active Journeys</h5>
+        <InputSwitch
+          className="p-m-4 mr-4"
+          checked={checked}
+          onChange={handleClick}
         />
-      </span>
-    </div>
+      </div>
+    </>
   );
 
-  console.log(allJourneys);
+  // console.log(allJourneys);
 
   //   const statusFilterElement = renderStatusFilter();
   //   const regionFilterElement = renderRegionFilter();
@@ -285,7 +317,12 @@ const JourneyList = ({ journeys, user }) => {
   if (!user) return <Redirect to="/login" />;
   return (
     <div className="journeyslist ui-toolbar-group-left ">
-      <DriverModal openModal={openModal} setOpenModal={setOpenModal} journey={journeyToAssign} key={journeyToAssign?.id}/>
+      <DriverModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        journey={journeyToAssign}
+        key={journeyToAssign?.id}
+      />
       <div className="datatable-crud-demo">
         <Toast ref={toast} />
 
@@ -312,7 +349,7 @@ const JourneyList = ({ journeys, user }) => {
               body={journeyIdBodyTemplate}
             ></Column>
             <Column
-              field="driver.user.first_name"
+              field="driver.user.last_name"
               header="Driver"
               body={driverBodyTemplate}
             ></Column>
