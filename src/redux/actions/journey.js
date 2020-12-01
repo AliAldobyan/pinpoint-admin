@@ -1,6 +1,5 @@
 import instance from "./instance";
 import { SET_JOURNEYS, ADD_JOURNEY, ASSIGN_DRIVER } from "./actionTypes";
-import {fetchShipments} from "./shipment";
 
 export const fetchJourneys = () => async (dispatch) => {
     try {
@@ -15,14 +14,13 @@ export const fetchJourneys = () => async (dispatch) => {
     }
 };
 
-export const addJourney = (journeyData) => async (dispatch) => {
+export const addJourney = (packages) => async (dispatch) => {
     try {
-        const res = await instance.post("journeys/add/", journeyData);
+        const res = await instance.post("journeys/add/", packages);
         const journey = res.data;
-        // dispatch(fetchShipments())
         dispatch({
             type: ADD_JOURNEY,
-            payload: journey,
+            payload: {journey, packages},
         });
     } catch (error) {
         console.error(error);

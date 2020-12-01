@@ -9,10 +9,6 @@ import DriversList from "./DriversList";
 const DriverModal = ({ journey, drivers, openModal, setOpenModal, driverAssign }) => {
     const [selectedDriver, setSelectedDriver] = useState(null);
 
-    const onClick = () => {
-        setOpenModal(true)
-    }
-
     const onHide = () => {
         setOpenModal(false)
     }
