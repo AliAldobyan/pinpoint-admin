@@ -85,7 +85,7 @@ const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTim
                 setSelected(selected.some(item => item.id === shipment.id) ? selected.filter(pin => pin.id !== shipment.id) : [...selected, shipment]);
             }}
             icon={selected.some(item => item.id === shipment.id) ? {
-                url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
+                url: `http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=${selected.findIndex(obj => obj.id === shipment.id) + 1}|9797ff|000000`,
             }:{
                 url: `http://maps.google.com/mapfiles/ms/icons/red-dot.png`,
             }}

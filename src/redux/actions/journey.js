@@ -19,7 +19,7 @@ export const addJourney = (journeyData) => async (dispatch) => {
     try {
         const res = await instance.post("journeys/add/", journeyData);
         const journey = res.data;
-        dispatch(fetchShipments())
+        // dispatch(fetchShipments())
         dispatch({
             type: ADD_JOURNEY,
             payload: journey,

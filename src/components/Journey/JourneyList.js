@@ -23,6 +23,7 @@ import { Toolbar } from "primereact/toolbar";
 import { InputText } from "primereact/inputtext";
 
 import "../Shipments/cutom.css";
+import DriverModal from "../Driver/DriverModal";
 const JourneyList = ({ journeys, user }) => {
   const [allJourneys, setJourneys] = useState(journeys || null);
 
@@ -31,7 +32,8 @@ const JourneyList = ({ journeys, user }) => {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-
+  const [openModal, setOpenModal] = useState(false)
+  const [journeyToAssign, setJourneyToAssign] = useState(null)
   const [submitted, setSubmitted] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
@@ -45,6 +47,11 @@ const JourneyList = ({ journeys, user }) => {
     // fetchRegions();
     // fetchTimes();
   }, [journeys]);
+
+  const handleAssignClick = (rowData) => {
+    setJourneyToAssign(rowData)
+    setOpenModal(true)
+  }
 
   if (!journeys)
     return (
@@ -163,7 +170,7 @@ const JourneyList = ({ journeys, user }) => {
             {`${rowData.driver?.user.first_name} ${rowData.driver?.user.last_name}`}
           </span>
         ) : (
-          <button className="btn btn-primary">Assign Driver</button>
+          <button className="btn btn-primary" onClick={() => handleAssignClick(rowData)}>Assign Driver</button>
         )}
       </>
     );
@@ -278,6 +285,7 @@ const JourneyList = ({ journeys, user }) => {
   if (!user) return <Redirect to="/login" />;
   return (
     <div className="journeyslist ui-toolbar-group-left ">
+      <DriverModal openModal={openModal} setOpenModal={setOpenModal} journey={journeyToAssign} key={journeyToAssign?.id}/>
       <div className="datatable-crud-demo">
         <Toast ref={toast} />
 
