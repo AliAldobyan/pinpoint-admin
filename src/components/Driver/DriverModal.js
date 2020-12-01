@@ -40,10 +40,11 @@ const DriverModal = ({ journey, drivers, openModal, setOpenModal, driverAssign }
         center: { lat: 24.7136, lng: 46.6753 },
         zoom: 11,
     };
+
     if (!drivers) return <h1>Loading...</h1>
+
     const availableDrivers = drivers.filter(driver => driver.journeys[driver.journeys?.length - 1].is_completed === true)
-    console.log(journey);
-    console.log(drivers);
+
     const overlays = journey?.packages?.map(shipment =>
         new window.google.maps.Marker({
             position: {

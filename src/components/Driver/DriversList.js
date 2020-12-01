@@ -35,7 +35,7 @@ const DriversList = ({ drivers, selectedDriver, setSelectedDriver }) => {
     return (
         <div>
             <Dropdown value={selectedDriver} options={drivers} onChange={onDriverChange} optionLabel="user.first_name"
-                      filter showClear filterBy="user.last_name,user.first_name"  placeholder="Select a Driver"
+                      filter showClear filterBy="user.last_name"  placeholder="Select a Driver"
                       valueTemplate={selectedDriverTemplate} itemTemplate={driverOptionTemplate} style={{width: "40%"}}/>
         </div>
     );
