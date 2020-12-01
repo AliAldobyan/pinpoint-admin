@@ -51,7 +51,7 @@ function Navbar({ user, logout }) {
                   </Link>
                 </li>
                 <li className="nav-text">
-                  <Link to="/journeys/list/">
+                  <Link to="/map/">
                     <FaIcons.FaRoute />
                     <span className="span-space">Shipments Map</span>
                   </Link>

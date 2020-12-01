@@ -9,6 +9,7 @@ import {
   fetchJourneys,
   fetchStatuses,
   checkForExpiredToken,
+  fetchDrivers,
 } from "./actions";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -16,7 +17,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducer, composeEnhancers(applyMiddleware(thunk)));
 
 store.dispatch(fetchShipments());
-
+store.dispatch(fetchDrivers());
 store.dispatch(fetchJourneys());
 store.dispatch(fetchStatuses());
 store.dispatch(checkForExpiredToken());

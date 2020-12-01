@@ -3,17 +3,14 @@ import "./App.css";
 
 import Navbar from "./components/Sidebar/Navbar";
 
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import Home from "./components/HomePage/Home";
 import Shipments from "./components/Shipments/Shipments";
 import Login from "./components/Authentication/Login";
-import Journey from "./components/Journey/Journey";
 import JourneyList from "./components/Journey/JourneyList";
-import JourneyCurrent from "./components/Journey/JourneyCurrent";
-import JourneyCompleted from "./components/Journey/JourneyCompleted";
-import JourneyMap from "./components/Journey/JourneyMap";
 import JourneyCreate from "./components/Journey/JourneyCreate";
+import ShipmentsMap from "./components/Shipments/ShipmentsMap";
 
 function App() {
   return (
@@ -25,26 +22,9 @@ function App() {
         <Route path="/shipments/" component={Shipments} />
         <Route path="/journeys/list/" component={JourneyList} />
         <Route path="/journeys/create/" component={JourneyCreate} />
+        <Route path="/map/" component={ShipmentsMap} />
       </Switch>
 
-      {/*<Journey/>*/}
-      {/*<Switch>*/}
-      {/*    <Route path="/journeys/list/">*/}
-      {/*        <JourneyList/>*/}
-      {/*    </Route>*/}
-      {/*    <Route path="/journeys/current/">*/}
-      {/*        <JourneyCurrent/>*/}
-      {/*    </Route>*/}
-      {/*    <Route path="/journeys/completed/">*/}
-      {/*        <JourneyCompleted/>*/}
-      {/*    </Route>*/}
-      {/*    <Route path="/journeys/map/">*/}
-      {/*        <JourneyMap/>*/}
-      {/*    </Route>*/}
-      {/*    <Route path="/journeys/create/">*/}
-      {/*        <JourneyCreate/>*/}
-      {/*    </Route>*/}
-      {/*</Switch>*/}
     </>
   );
 }
