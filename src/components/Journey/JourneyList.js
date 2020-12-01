@@ -49,6 +49,17 @@ const JourneyList = ({ journeys, user }) => {
     // fetchTimes();
   }, [journeys]);
 
+  useEffect(() => {
+    if (checked) {
+      const filtered = allJourneys.filter(
+        (journey) => journey.is_completed === false
+      );
+      setJourneys(filtered);
+    } else {
+      setJourneys(journeys);
+    }
+  }, [checked]);
+
   const handleAssignClick = (rowData) => {
     setJourneyToAssign(rowData);
     setOpenModal(true);
@@ -252,10 +263,10 @@ const JourneyList = ({ journeys, user }) => {
             <div
               className="progress-bar"
               role="progressbar"
-              style={{ width: "100%" }}
-              aria-valuenow="100"
+              style={{ width: `${(counter / len) * 100}%` }}
+              aria-valuenow="0"
               aria-valuemin="0"
-              aria-valuemax="10"
+              aria-valuemax={len}
             >
               {counter}/{len}
             </div>
@@ -265,8 +276,8 @@ const JourneyList = ({ journeys, user }) => {
             <div
               className="progress-bar"
               role="progressbar"
-              style={{ width: "50%" }}
-              aria-valuenow="50"
+              style={{ width: `${(counter / len) * 100}%` }}
+              aria-valuenow="0"
               aria-valuemin="0"
               aria-valuemax={len}
             >
@@ -279,9 +290,8 @@ const JourneyList = ({ journeys, user }) => {
   };
   const handleClick = (e) => {
     setChecked(e.value);
-    dt.current.filter(e.value, "is_completed", "in");
-    console.log(dt.current);
   };
+
   const header = (
     <>
       <div className="table-header">
@@ -297,19 +307,14 @@ const JourneyList = ({ journeys, user }) => {
         </span>
       </div>
 
-      <div className="container text-center">
-        {" "}
-        <h5 className="p-m-0">Active Journeys</h5>
-        <InputSwitch
-          className="p-m-4 mr-4"
-          checked={checked}
-          onChange={handleClick}
-        />
+      <div className=" d-flex align-self-center ">
+        <h5 className="align-self-baseline mr-3">Only Active Journeys?</h5>
+        <InputSwitch checked={checked} onChange={handleClick} />
       </div>
     </>
   );
 
-  // console.log(allJourneys);
+  console.log(allJourneys);
 
   //   const statusFilterElement = renderStatusFilter();
   //   const regionFilterElement = renderRegionFilter();

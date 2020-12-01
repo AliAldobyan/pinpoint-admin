@@ -31,7 +31,7 @@ function Navbar({ user, logout }) {
 
             {user ? (
               <>
-                ({" "}
+                {" "}
                 <li className="nav-text">
                   <NavLink to="/" exact activeClassName="active">
                     <AiIcons.AiFillHome />
