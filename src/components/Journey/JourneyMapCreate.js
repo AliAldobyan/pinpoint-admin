@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import {connect} from "react-redux";
 
 const libraries = ["places"];
