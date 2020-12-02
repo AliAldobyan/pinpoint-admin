@@ -6,6 +6,7 @@ import { Column } from 'primereact/column';
 import {addJourney} from "../../redux/actions";
 import moment from "moment";
 import DriverModal from "../Driver/DriverModal";
+import {Toolbar} from "primereact/toolbar";
 
 const JourneyCreate = ({ shipments, createJourney, journeys }) => {
 
@@ -29,8 +30,8 @@ const JourneyCreate = ({ shipments, createJourney, journeys }) => {
 
     const header = (
         <div className="table-header">
-            <p>Travel Time: {travelTime}</p>
-            {selectedShipments.length >= 1 && <button className="btn btn-primary" onClick={handleClick}>Create Journey</button>}
+            {selectedShipments.length >= 1 ? <button className="btn btn-primary" onClick={handleClick}>Create Journey</button> :
+                <button className="btn btn-primary" disabled onClick={handleClick}>Create Journey</button>}
         </div>
     );
     const dateBodyTemplate = (rowData) => {
@@ -43,8 +44,9 @@ const JourneyCreate = ({ shipments, createJourney, journeys }) => {
 
     return (
         <div className="journey">
+            <Toolbar className="p-mb-2" right={header}></Toolbar>
             <div>
-                <DataTable value={filteredShipments} header={header} selection={selectedShipments}
+                <DataTable value={filteredShipments} selection={selectedShipments}
                            onSelectionChange={e => setSelectedShipments(e.value)} selectionMode="multiple" dataKey="id" metaKeySelection={false}
                            scrollable scrollHeight="38vh">
                     <Column field="id" header="ID"/>

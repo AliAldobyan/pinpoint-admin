@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import {connect} from "react-redux";
+import "./JourneyMapCreate.css"
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -93,7 +94,9 @@ const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTim
     ))
 
     return (
-        <div>
+        <div className="d-flex justify-content-center">
+            {travelTime > 0 && travelTime < 60 && <h4 className="mapHeader bg-light p-2">Travel Time: {travelTime}</h4>}
+            {travelTime > 60 && <h4 className="mapHeader bg-light p-2 text-danger">Travel Time: {travelTime}</h4>}
             <GoogleMap
                 id="map"
                 mapContainerStyle={mapContainerStyle}
