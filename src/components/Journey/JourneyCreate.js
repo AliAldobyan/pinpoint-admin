@@ -62,7 +62,7 @@ const JourneyCreate = ({ shipments, createJourney, journeys }) => {
                               travelTime={travelTime} setTravelTime={setTravelTime}
                               previousLength={previousLength} setPreviousLength={setPreviousLength}
             />
-            <DriverModal openModal={openModal} setOpenModal={setOpenModal} journey={journeys[0]} key={journeys[0].id}/>
+            <DriverModal openModal={openModal} setOpenModal={setOpenModal} journey={journeys[0]} key={journeys[0].id} modalHeader={"New journey has been created"}/>
         </div>
     );
 };

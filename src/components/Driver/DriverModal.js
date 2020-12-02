@@ -6,11 +6,12 @@ import {connect} from "react-redux";
 import {GMap} from "primereact/gmap";
 import DriversList from "./DriversList";
 
-const DriverModal = ({ journey, drivers, openModal, setOpenModal, driverAssign }) => {
+const DriverModal = ({ journey, drivers, openModal, setOpenModal, driverAssign, modalHeader }) => {
     const [selectedDriver, setSelectedDriver] = useState(null);
 
     const onHide = () => {
         setOpenModal(false)
+        setSelectedDriver(null)
     }
 
     const handleClick = () => {
@@ -24,7 +25,7 @@ const DriverModal = ({ journey, drivers, openModal, setOpenModal, driverAssign }
 
     const header = (
         <div>
-            <h4>New journey has been created</h4>
+            <h4>{modalHeader}</h4>
         </div>
     )
 
@@ -57,7 +58,6 @@ const DriverModal = ({ journey, drivers, openModal, setOpenModal, driverAssign }
 
     return (
         <div>
-            {/*<Button label="Show" onClick={() => onClick()} />*/}
             <Dialog header={header} visible={openModal} style={{ width: '50vw' }} footer={footer} onHide={() => onHide()}>
                 <GMap
                     options={options}
