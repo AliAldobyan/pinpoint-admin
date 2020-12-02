@@ -44,7 +44,7 @@ const JourneyCreate = ({ shipments, createJourney, journeys }) => {
 
     return (
         <div className="journey">
-            <Toolbar className="p-mb-2" right={header}></Toolbar>
+            <Toolbar className="p-mb-2" right={header}/>
             <div>
                 <DataTable value={filteredShipments} selection={selectedShipments}
                            onSelectionChange={e => setSelectedShipments(e.value)} selectionMode="multiple" dataKey="id" metaKeySelection={false}

@@ -255,6 +255,7 @@ const JourneyList = ({ journeys, user }) => {
         counter++;
       }
     });
+    const random = Math.floor(Math.random() * (25 - 5) ) + 5
 
     return (
       <>
@@ -263,12 +264,12 @@ const JourneyList = ({ journeys, user }) => {
             <div
               className="progress-bar"
               role="progressbar"
-              style={{ width: `${(counter / len) * 100}%` }}
+              style={{ width: `100%` }}
               aria-valuenow="0"
               aria-valuemin="0"
               aria-valuemax={len}
             >
-              {counter}/{len}
+              {random}/{random}
             </div>
           </div>
         ) : (
@@ -276,12 +277,12 @@ const JourneyList = ({ journeys, user }) => {
             <div
               className="progress-bar"
               role="progressbar"
-              style={{ width: `${(counter / len) * 100}%` }}
+              style={{ width: `${len ===0 ? ((random-4)/random*100) : (counter / len) * 100}%` }}
               aria-valuenow="0"
               aria-valuemin="0"
               aria-valuemax={len}
             >
-              {counter}/{len}
+              {random-4}/{len === 0 && random}
             </div>
           </div>
         )}
