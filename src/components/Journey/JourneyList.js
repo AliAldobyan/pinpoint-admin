@@ -327,6 +327,7 @@ const JourneyList = ({ journeys, user }) => {
         setOpenModal={setOpenModal}
         journey={journeyToAssign}
         key={journeyToAssign?.id}
+        modalHeader={`Assign a driver to journey`}
       />
       <div className="datatable-crud-demo">
         <Toast ref={toast} />
