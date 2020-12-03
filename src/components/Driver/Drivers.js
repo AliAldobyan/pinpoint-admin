@@ -94,7 +94,7 @@ const DriversList = ({ drivers, user }) => {
   const header = (
     <>
       <div className="table-header">
-        <h4 className="p-m-0">Journeys List</h4>
+        <h4 className="p-m-0">Drivers List</h4>
 
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
