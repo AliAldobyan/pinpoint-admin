@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { logout } from "../../redux/actions";
-
+import logo from "./logo.png";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
-
+import * as FiIcons from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
 import "./Navbar.css";
@@ -25,9 +25,18 @@ function Navbar({ user, logout }) {
         </div> */}
         <nav className={"nav-menu active"}>
           <ul className="nav-menu-items">
+            <br />
             <li className="navbar-toggle">
-              <h2 className="ml-5">Pinpoint</h2>
+              {/* <h2 className="ml-5">Pinpoint</h2> */}
+              <img
+                className="py-5"
+                src={logo}
+                alt=""
+                style={{ position: "absolute" }}
+              ></img>
             </li>
+            {/* <hr className="sidebar-divider my-4" /> */}
+            <br />
 
             {user ? (
               <>
@@ -40,7 +49,7 @@ function Navbar({ user, logout }) {
                 </li>
                 <li className="nav-text">
                   <NavLink to="/shipments/" exact activeClassName="active">
-                    <FaIcons.FaTruck />
+                    <FiIcons.FiBox />
                     <span className="span-space">Shipments</span>
                   </NavLink>
                 </li>
@@ -51,15 +60,15 @@ function Navbar({ user, logout }) {
                   </NavLink>
                 </li>
                 <li className="nav-text">
-                  <NavLink to="/map/" exact activeClassName="active">
-                    <FaIcons.FaMapMarkedAlt />
-                    <span className="span-space">Shipments Map</span>
-                  </NavLink>
-                </li>
-                <li className="nav-text">
                   <NavLink to="/drivers/" exact activeClassName="active">
                     <FaIcons.FaCarSide />
                     <span className="span-space">Drivers</span>
+                  </NavLink>
+                </li>
+                <li className="nav-text">
+                  <NavLink to="/map/" exact activeClassName="active">
+                    <FaIcons.FaMapMarkedAlt />
+                    <span className="span-space">Shipments Map</span>
                   </NavLink>
                 </li>
                 <button className="btn btn-lg btn-info   " onClick={logout}>
