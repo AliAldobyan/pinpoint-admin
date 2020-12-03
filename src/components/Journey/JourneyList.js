@@ -7,7 +7,6 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.css";
 import "primeflex/primeflex.css";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { ProgressBar } from "primereact/progressbar";
 import "../../index.css";
 
 import moment from "moment";
@@ -17,8 +16,6 @@ import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { InputSwitch } from "primereact/inputswitch";
-import { MultiSelect } from "primereact/multiselect";
-import { Dropdown } from "primereact/dropdown";
 import { Toolbar } from "primereact/toolbar";
 
 import { InputText } from "primereact/inputtext";
@@ -27,26 +24,16 @@ import "../Shipments/cutom.css";
 import DriverModal from "../Driver/DriverModal";
 const JourneyList = ({ journeys, user }) => {
   const [allJourneys, setJourneys] = useState(journeys || null);
-
-  const [journey, setJourney] = useState(null);
   const [selectedJourneys, setSelectedJourneys] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(null);
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [journeyToAssign, setJourneyToAssign] = useState(null);
   const [checked, setChecked] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
   const dt = useRef(null);
-  //   const statusesOptions = statuses?.map((status) => status.name);
-  //   const regionsOptions = regions?.map((region) => region.name);
-  //   const timeOptions = times?.map((time) => time.time);
 
   useEffect(() => {
     setJourneys(journeys);
-    // fetchRegions();
-    // fetchTimes();
   }, [journeys]);
 
   useEffect(() => {
@@ -77,6 +64,8 @@ const JourneyList = ({ journeys, user }) => {
       </div>
     );
 
+  const random = () => Math.floor(Math.random() * (25 - 5) ) + 5
+
   const leftToolbarTemplate = () => {
     return (
       <Link to="/journeys/create/">
@@ -104,61 +93,6 @@ const JourneyList = ({ journeys, user }) => {
       </>
     );
   };
-  //   const renderStatusFilter = () => {
-  //     return (
-  //       <MultiSelect
-  //         value={selectedStatus}
-  //         options={statusesOptions}
-  //         onChange={onStatusFilterChange}
-  //         itemTemplate={statusItemTemplate}
-  //         filterBy={selectedStatus}
-  //         placeholder="Select a Status"
-  //       />
-  //     );
-  //   };
-  const statusItemTemplate = (option) => {
-    return (
-      <span className={classNames("customer-badge", "status-" + option)}>
-        {option}
-      </span>
-    );
-  };
-  const onStatusFilterChange = (event) => {
-    dt.current.filter(event.value, "status.name", "in");
-
-    setSelectedStatus(event.value);
-  };
-  const regionBodyTemplate = (rowData) => {
-    return (
-      <span className={`order-badge status-${rowData}`}>
-        {rowData.region?.name}
-      </span>
-    );
-  };
-  //   const renderRegionFilter = () => {
-  //     return (
-  //       <Dropdown
-  //         value={selectedRegion}
-  //         options={regionsOptions}
-  //         onChange={onRegionFilterChange}
-  //         itemTemplate={regionItemTemplate}
-  //         showClear
-  //         placeholder="Select a Region"
-  //       />
-  //     );
-  //   };
-  const regionItemTemplate = (option) => {
-    return (
-      <span className={classNames("customer-badge", "status-" + option)}>
-        {option}
-      </span>
-    );
-  };
-  const onRegionFilterChange = (event) => {
-    dt.current.filter(event.value, "region.name", "equals");
-
-    setSelectedRegion(event.value);
-  };
 
   const journeyIdBodyTemplate = (rowData) => {
     return (
@@ -167,13 +101,7 @@ const JourneyList = ({ journeys, user }) => {
       </span>
     );
   };
-  const y = (rowData) => {
-    return (
-      <span className={`customer-badge status-${rowData.tracking_num}`}>
-        {rowData.tracking_num}
-      </span>
-    );
-  };
+
   const driverBodyTemplate = (rowData) => {
     return (
       <>
@@ -200,62 +128,33 @@ const JourneyList = ({ journeys, user }) => {
       </span>
     );
   };
+
   const distanceBodyTemplate = (rowData) => {
     return (
       <span className={`customer-badge status-${rowData}`}>
-        {rowData.distance_traveled}
+        {rowData.distance_traveled && `${rowData.distance_traveled} km`}
       </span>
     );
   };
+
   const timeBodyTemplate = (rowData) => {
     return (
       <span className={`customer-badge status-${rowData}`}>
-        {rowData.time_traveled}
+        {rowData.time_traveled && `${rowData.time_traveled} min`}
       </span>
-    );
-  };
-  //   const renderTimeFilter = () => {
-  //     return (
-  //       <MultiSelect
-  //         value={selectedTime}
-  //         options={timeOptions}
-  //         onChange={onTimeFilterChange}
-  //         itemTemplate={timeItemTemplate}
-  //         filterBy={selectedTime}
-  //         placeholder="Select Time"
-  //       />
-  //     );
-  //   };
-  const timeItemTemplate = (option) => {
-    return (
-      <span className={classNames("customer-badge", "status-" + option)}>
-        {option}
-      </span>
-    );
-  };
-  const onTimeFilterChange = (event) => {
-    dt.current.filter(event.value, "preferred_time.time", "in");
-
-    setSelectedTime(event.value);
-  };
-  const displayValueTemplate = (value) => {
-    return (
-      <React.Fragment>
-        {value}/<b>10</b>
-      </React.Fragment>
     );
   };
 
   const actionBodyTemplate = (rowData) => {
     let counter = 0;
+    const randomInside = random()
     const len = rowData?.packages.length;
 
     rowData?.packages.forEach((p) => {
-      if (p.status?.name === "Delivered") {
+      if (p.status?.id === 4 || p.status?.id === 5) {
         counter++;
       }
     });
-    const random = Math.floor(Math.random() * (25 - 5) ) + 5
 
     return (
       <>
@@ -269,26 +168,28 @@ const JourneyList = ({ journeys, user }) => {
               aria-valuemin="0"
               aria-valuemax={len}
             >
-              {random}/{random}
+              {len}/{len}
             </div>
           </div>
-        ) : (
+        ) :
+            (
           <div className="progress">
             <div
               className="progress-bar"
               role="progressbar"
-              style={{ width: `${len ===0 ? ((random-4)/random*100) : (counter / len) * 100}%` }}
+              style={{ width: `${len ===0 ? ((randomInside-4)/randomInside*100) : (counter / len) * 100}%` }}
               aria-valuenow="0"
               aria-valuemin="0"
               aria-valuemax={len}
             >
-              {random-4}/{len === 0 && random}
+              {counter}/{len}
             </div>
           </div>
         )}
       </>
     );
   };
+
   const handleClick = (e) => {
     setChecked(e.value);
   };
@@ -315,11 +216,6 @@ const JourneyList = ({ journeys, user }) => {
     </>
   );
 
-  console.log(allJourneys);
-
-  //   const statusFilterElement = renderStatusFilter();
-  //   const regionFilterElement = renderRegionFilter();
-  //   const timeFilterElement = renderTimeFilter();
   if (!user) return <Redirect to="/login" />;
   return (
     <div className="journeyslist ui-toolbar-group-left ">
@@ -334,7 +230,7 @@ const JourneyList = ({ journeys, user }) => {
         <Toast ref={toast} />
 
         <div className="card">
-          <Toolbar className="p-mb-2" right={leftToolbarTemplate}></Toolbar>
+          <Toolbar className="p-mb-2" right={leftToolbarTemplate}/>
 
           <DataTable
             ref={dt}
@@ -351,58 +247,39 @@ const JourneyList = ({ journeys, user }) => {
             header={header}
           >
             <Column
-              field="id"
-              header="Journey Id"
-              body={journeyIdBodyTemplate}
-            ></Column>
+                field="id"
+                header="Journey Id"
+                body={journeyIdBodyTemplate}
+                />
             <Column
-              field="driver.user.last_name"
-              header="Driver"
-              body={driverBodyTemplate}
-            ></Column>
-            {/* <Column field="receiver_phone" header="Customer Phone"  ></Column> */}
+                field="driver.user.last_name"
+                header="Driver"
+                body={driverBodyTemplate}
+                />
+
             <Column
-              field="date"
-              header="Delivery Date"
-              body={dateBodyTemplate}
-              sortable
-            ></Column>
+                field="date"
+                header="Delivery Date"
+                body={dateBodyTemplate}
+                sortable
+                />
             <Column
-              field="distance_traveled"
-              header="Distance Traveled"
-              body={distanceBodyTemplate}
-              //   filter
-              //   filterElement={timeFilterElement}
-            ></Column>
+                field="distance_traveled"
+                header="Distance Traveled"
+                body={distanceBodyTemplate}
+                />
             <Column
-              field="time_traveled"
-              header="Time Traveled"
-              body={timeBodyTemplate}
-            ></Column>
+                field="time_traveled"
+                header="Time Traveled"
+                body={timeBodyTemplate}
+                />
             <Column
               field="status"
               header="Status"
               body={statusBodyTemplate}
-              //   filter
-              //   filterElement={statusFilterElement}
             />
-            {/*<Column
-              field="region.name"
-              header="Region"
-              body={regionBodyTemplate}
-              //   filter
-              //   filterElement={regionFilterElement}
-            ></Column>
 
-            <Column
-              field="status.name"
-              header="Status"
-              body={statusBodyTemplate}
-              //   filter
-              //   filterElement={statusFilterElement}
-            /> */}
-
-            <Column header="Progress" body={actionBodyTemplate}></Column>
+            <Column header="Progress" body={actionBodyTemplate}/>
           </DataTable>
         </div>
       </div>
