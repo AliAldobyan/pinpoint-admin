@@ -10,7 +10,8 @@
 .home,
 .shipments,
 .journeyslist,
-.loader {
+.loader,
+.drivers {
   display: flex;
   height: 100vh;
   align-items: right;

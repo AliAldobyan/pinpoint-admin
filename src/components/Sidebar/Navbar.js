@@ -56,6 +56,12 @@ function Navbar({ user, logout }) {
                     <span className="span-space">Shipments Map</span>
                   </NavLink>
                 </li>
+                <li className="nav-text">
+                  <NavLink to="/drivers/" exact activeClassName="active">
+                    <FaIcons.FaCarSide />
+                    <span className="span-space">Drivers</span>
+                  </NavLink>
+                </li>
                 <button className="btn btn-lg btn-info   " onClick={logout}>
                   Logout
                 </button>
