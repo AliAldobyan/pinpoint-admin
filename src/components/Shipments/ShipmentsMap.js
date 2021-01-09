@@ -2,6 +2,7 @@ import React from 'react';
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import {connect} from "react-redux";
 import {addJourney} from "../../redux/actions";
+import {ProgressSpinner} from "primereact/progressspinner";
 
 const mapContainerStyle = {
     height: "100vh",
@@ -18,9 +19,36 @@ const ShipmentsMap = ({ shipments }) => {
     });
 
 
-    if (loadError) return "Error";
-    if (!isLoaded) return "Loading...";
-    if (!shipments) return <h1> LOADING...</h1>;
+    if (loadError) return (
+        <div className="loader mt-5">
+            <ProgressSpinner
+                style={{ width: "200px", height: "200px" }}
+                strokeWidth="8"
+                fill="#EEEEEE"
+                animationDuration=".5s"
+            />
+        </div>
+    );
+    if (!isLoaded) return (
+        <div className="loader mt-5">
+            <ProgressSpinner
+                style={{ width: "200px", height: "200px" }}
+                strokeWidth="8"
+                fill="#EEEEEE"
+                animationDuration=".5s"
+            />
+        </div>
+    );
+    if (!shipments) return (
+        <div className="loader mt-5">
+            <ProgressSpinner
+                style={{ width: "200px", height: "200px" }}
+                strokeWidth="8"
+                fill="#EEEEEE"
+                animationDuration=".5s"
+            />
+        </div>
+    );
 
     const markers = shipments?.map(shipment => (
         <Marker
