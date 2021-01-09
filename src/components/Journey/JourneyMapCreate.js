@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import React, { useEffect, useState } from 'react';
+import { GoogleMap, useLoadScript, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import {connect} from "react-redux";
 import "./JourneyMapCreate.css"
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -13,7 +14,7 @@ const center = {
     lng: 46.663406,
 };
 const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTime, previousLength, setPreviousLength }) => {
-
+    const [routes, setRoutes] = useState(null)
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries,
@@ -25,6 +26,26 @@ const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTim
                 setPreviousLength(selected.length)
                 setTravelTime(0)
                 if (selected.length > 1) {
+                    const waypoints = selected.map(shipment => ({
+                        location: { lat: Number(shipment.latitude), lng: Number(shipment.longitude) },
+                        stopover: true
+                    }));
+                    const directionsService = new window.google.maps.DirectionsService();
+                    directionsService.route(
+                        {
+                            origin: waypoints.shift().location,
+                            destination: waypoints.pop().location,
+                            travelMode: window.google.maps.TravelMode.DRIVING,
+                            waypoints: waypoints
+                        },
+                        (result, status) => {
+                            if (status === window.google.maps.DirectionsStatus.OK) {
+                                setRoutes(result);
+                            } else {
+                                console.log(result);
+                            }
+                        }
+                    );
                     let newTravelTime = 0
                     for (let i = 1; i < selected.length; i++) {
                         let originShipment = selected[i - 1]
@@ -50,6 +71,26 @@ const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTim
             else {
                 setPreviousLength(selected.length)
                 if (selected.length > 1) {
+                    const waypoints = selected.map(shipment => ({
+                        location: { lat: Number(shipment.latitude), lng: Number(shipment.longitude) },
+                        stopover: true
+                    }));
+                    const directionsService = new window.google.maps.DirectionsService();
+                    directionsService.route(
+                        {
+                            origin: waypoints.shift().location,
+                            destination: waypoints.pop().location,
+                            travelMode: window.google.maps.TravelMode.DRIVING,
+                            waypoints: waypoints
+                        },
+                        (result, status) => {
+                            if (status === window.google.maps.DirectionsStatus.OK) {
+                                setRoutes(result);
+                            } else {
+                                console.log(result);
+                            }
+                        }
+                    );
                     let originShipment = selected[selected.length - 2]
                     let destinationShipment = selected[selected.length - 1]
                     let origin = new window.google.maps.LatLng(Number(originShipment.latitude), Number(originShipment.longitude));
@@ -74,9 +115,36 @@ const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTim
 
     }, [selected]);
 
-    if (loadError) return "Error";
-    if (!isLoaded) return "Loading...";
-    if (!shipments) return <h1> LOADING...</h1>;
+    if (loadError)  return (
+        <div className="loader mt-5">
+            <ProgressSpinner
+                style={{ width: "200px", height: "200px" }}
+                strokeWidth="8"
+                fill="#EEEEEE"
+                animationDuration=".5s"
+            />
+        </div>
+    );
+    if (!isLoaded)  return (
+        <div className="loader mt-5">
+            <ProgressSpinner
+                style={{ width: "200px", height: "200px" }}
+                strokeWidth="8"
+                fill="#EEEEEE"
+                animationDuration=".5s"
+            />
+        </div>
+    );
+    if (!shipments) return (
+        <div className="loader mt-5">
+            <ProgressSpinner
+                style={{ width: "200px", height: "200px" }}
+                strokeWidth="8"
+                fill="#EEEEEE"
+                animationDuration=".5s"
+            />
+        </div>
+    );
 
     const markers = shipments?.map(shipment => (
         <Marker
@@ -104,6 +172,12 @@ const JourneyMap = ({ shipments, selected, setSelected, travelTime, setTravelTim
                 center={center}
             >
                 {markers}
+                {selected.length > 1 && <DirectionsRenderer
+                    directions={routes}
+                    options={{markerOptions: {
+                        visible: false
+                        }}}
+                />}
             </GoogleMap>
         </div>
     );

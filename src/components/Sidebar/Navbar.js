@@ -5,6 +5,7 @@ import logo from "./logo.png";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import * as FiIcons from "react-icons/fi";
+import * as GiIcons from "react-icons/gi";
 import { NavLink } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
 import "./Navbar.css";
@@ -57,6 +58,12 @@ function Navbar({ user, logout }) {
                   <NavLink to="/journeys/list/" exact activeClassName="active">
                     <FaIcons.FaRoute />
                     <span className="span-space">Journeys</span>
+                  </NavLink>
+                </li>
+                <li className="nav-text">
+                  <NavLink to="/journeys/create/" exact activeClassName="active">
+                    <GiIcons.GiPathDistance />
+                    <span className="span-space">Create Journey</span>
                   </NavLink>
                 </li>
                 <li className="nav-text">

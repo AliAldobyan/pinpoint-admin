@@ -45,7 +45,7 @@ const DriversList = ({ drivers, user }) => {
   const statusBodyTemplate = (rowData) => {
     return (
       <>
-        {rowData?.journeys[rowData.journeys?.length - 1].is_completed ===
+        {rowData?.journeys[rowData.journeys?.length - 1]?.is_completed ===
         false ? (
           <span className={classNames("customer-badge", "status-Failed")}>
             Not Available
